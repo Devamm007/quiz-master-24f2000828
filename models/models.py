@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from bcrypt import gensalt, hashpw
 from app import app
 
 db = SQLAlchemy(app)
@@ -9,21 +10,21 @@ class Registrations(db.Model):
     fullname = db.Column(db.String(32), nullable=True)
     username = db.Column(db.String(32), unique=True)
     email = db.Column(db.String(32), nullable=False)
-    dob = db.Column(db.Date, nullable=False)
+    dob = db.Column(db.Date, nullable=True)
     passhash = db.Column(db.String(256), nullable=False)
-    pursuing = db.Column(db.String(32), nullable=False)
-    is_admin = db.Column(db.Boolean, nullable=False, default=False)
+    pursuing = db.Column(db.String(32), nullable=True)
+    is_admin = db.Column(db.Boolean, nullable = False, default = False)
 
-    scores = db.relationship('Scores', backref='user', lazy='True')
-    user_inputs = db.relationship('UserInput', backref='user', lazy='True')
+    scores = db.relationship('Scores', backref='user', lazy=True)
+    user_inputs = db.relationship('UserInput', backref='user', lazy=True)
 
 class Subjects(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     subject = db.Column(db.String(64), nullable=False)
     subject_des = db.Column(db.String(250), nullable=True)
 
-    chapters = db.relationship('Chapters', backref='subject', lazy='True')
-    quizzes = db.relationship('Quizzes', backref='subject', lazy='True')
+    chapters = db.relationship('Chapters', backref='subject', lazy=True)
+    quizzes = db.relationship('Quizzes', backref='subject', lazy=True)
 
 class Chapters(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -31,7 +32,7 @@ class Chapters(db.Model):
     chapter = db.Column(db.String(64), nullable=False)
     chapter_des = db.Column(db.String(250), nullable=True)
 
-    quizzes = db.relationship('Quizzes', backref='chapter', lazy='True')
+    quizzes = db.relationship('Quizzes', backref='chapter', lazy=True)
 
 class Quizzes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -41,9 +42,9 @@ class Quizzes(db.Model):
     time = db.Column(db.Integer, nullable=False)
     remarks = db.Column(db.String(250), nullable=True)
 
-    questions = db.relationship('Questions', backref='quiz', lazy='True', cascade="all, delete-orphan")
-    scores = db.relationship('Scores', backref='quiz', lazy='True')
-    user_inputs = db.relationship('UserInput', backref='quiz', lazy='True')
+    questions = db.relationship('Questions', backref='quiz', lazy=True, cascade="all, delete-orphan")
+    scores = db.relationship('Scores', backref='quiz', lazy=True)
+    user_inputs = db.relationship('UserInput', backref='quiz', lazy=True)
 
 class Questions(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -57,7 +58,7 @@ class Questions(db.Model):
     numeric = db.Column(db.String(20), nullable=True)
     answer = db.Column(db.String(64), nullable=False)
 
-    user_inputs = db.relationship('UserInput', backref='question', lazy='True')
+    user_inputs = db.relationship('UserInput', backref='question', lazy=True)
 
 class UserInput(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -77,3 +78,11 @@ class Scores(db.Model):
 
 with app.app_context():
     db.create_all()
+    # admin creation
+    admin = Registrations.query.filter_by(is_admin=True).first()
+    if not admin:
+        salt = gensalt()
+        password_hash = hashpw("Aa65@2007".encode('utf-8'), salt)
+        admin = Registrations(fullname="admin", username="admin", email="adminquizverse49@gmail.com", passhash=password_hash, is_admin=True)
+        db.session.add(admin)
+        db.session.commit()

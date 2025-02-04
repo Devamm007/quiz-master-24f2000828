@@ -1,0 +1,32 @@
+{% extends 'boilerplate.html' %}
+{% block title %}
+QuizVerse - Register
+{% endblock %}
+{% block style %}
+    
+{% endblock %}
+{% block content %}
+<h1>Register</h1>
+<div class="form_box">
+    <form method="post">
+        <div><label>Fullname: <input type="text" placeholder="Enter your name" name="fullname" required></label></div>
+        <div><label>Username: <input type="text" placeholder="Enter your username" name="username" id="username" required></label></div>
+        <div><label>Email: <input type="email" placeholder="Enter your email" name="email" id="email" required></label></div>
+        <div><label>DOB: <input type="date" name="dob" id="dob" required></label></div>
+        <div><label>Password: <input type="password" placeholder="Enter your password" name="password" id="password" required></label></div>
+        <div><label>Confirm Password: <input type="password" placeholder="Re-enter your password" name="cf_password" id="password" required></label></div>
+        <div>
+            <label>Pursuing:
+                <select id="dropdown" name="pursuing">
+                    <option value="">(select one)</option>
+                    <option value="secondary">Secondary</option>
+                    <option value="higher_secondary">Higher Secondary</option>
+                    <option value="bachelors">Bachelor's Degree</option>
+                    <option value="other">Others</option>
+                </select>
+            </label>
+        </div>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+{% endblock %}

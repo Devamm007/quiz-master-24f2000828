@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>
+            {% block title %}
+            QuizVerse
+            {% endblock %}
+        </title>
+        {% block style %}
+            
+        {% endblock %}
+    </head>
+    <body>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+        {% block content %}
+
+        {% endblock %}
+
+        {% block script %}
+
+        {% endblock %}
+    </body>
+</html>
