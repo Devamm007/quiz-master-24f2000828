@@ -1,0 +1,35 @@
+<nav>
+    <div>
+      <a href="/home">QuizVerse</a>
+      <div>
+        <ul>
+          {% if user%}
+            <li>
+              <a href="{{url_for('profile')}}">Profile</a>
+            </li>
+            <li>
+              <a href="{{url_for('logout')}}">Logout</a>
+            </li>
+          {% if user.is_admin %}
+            <li>
+              <a href="">Subjects</a>
+            </li>
+            <li>
+              <a href="">User details</a>
+            </li>
+          {% endif %}
+          {% else %}
+            <li>
+              <a href="{{url_for('login')}}">Login</a>
+            </li>
+            <li>
+              <a href="{{url_for('registration')}}">Register</a>
+            </li>
+            <li>
+              <a href="{{url_for('logout')}}">Logout</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>

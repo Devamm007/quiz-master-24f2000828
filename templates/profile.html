@@ -1,0 +1,18 @@
+{% extends 'boilerplate.html' %}
+{% block title %}
+    Profile - QuizVerse
+{% endblock %}
+{% block style %}
+    
+{% endblock %}
+{% block content %}
+    <form method="post">
+        <div><label>Username: <input type="text" name="username" placeholder="Enter your username (new/current)" required></label></div>
+        <div><label>Current password: <input type="password" name="curr_password" id="curr_password" placeholder="Enter your password" required></label></div>
+        <div><label>New password: <input type="password" name="password" id="password" placeholder="Enter your new password" required></label></div>
+        <input type="submit" value="Update">
+    </form>
+{% endblock %}
+{% block script %}
+    
+{% endblock %}
