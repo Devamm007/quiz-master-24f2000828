@@ -7,11 +7,14 @@
 {% endblock %}
 {% block content %}
     <form method="post">
-        <div><label>Username: <input type="text" name="username" placeholder="Enter your username (new/current)" required></label></div>
+        <div><label>Username: <input type="text" name="username" value="{{user.username}}" placeholder="Enter your username (new/current)" required></label></div>
         <div><label>Current password: <input type="password" name="curr_password" id="curr_password" placeholder="Enter your password" required></label></div>
         <div><label>New password: <input type="password" name="password" id="password" placeholder="Enter your new password" required></label></div>
         <input type="submit" value="Update">
     </form>
+    <form action="{{ url_for('delete_account') }}" method="post" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+        <button type="submit" class="btn btn-danger">Delete my account</button>
+    </form>    
 {% endblock %}
 {% block script %}
     

@@ -1,0 +1,28 @@
+{% extends 'boilerplate.html' %}
+{% block title %}
+    User Details
+{% endblock %}
+{% block style %}
+    
+{% endblock %}
+{% block content %}
+    <table border="2"> <!-- style="border: 2px solid black;"> -->
+        <tr>
+            <th>Name</th>
+            <th>E-Mail</th>
+            <th>DOB</th>
+            <th>Pursuing</th>
+        </tr>
+        {% for user in users %}
+            <tr>
+                <td>{{user.fullname}}</td>
+                <td>{{user.email}}</td>
+                <td>{{user.dob.strftime('%d-%m-%Y')}}</td>
+                <td>{{user.pursuing}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
+{% block script %}
+    
+{% endblock %}

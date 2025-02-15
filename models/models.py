@@ -1,11 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from bcrypt import gensalt, hashpw
+from bcrypt import checkpw, gensalt, hashpw
 from app import app
 
 db = SQLAlchemy(app)
 
-class Registrations(db.Model):
+class Registrations(db.Model): #default __tablename__ = "registrations"
     id = db.Column(db.Integer, primary_key=True)
     fullname = db.Column(db.String(32), nullable=True)
     username = db.Column(db.String(32), unique=True)
@@ -15,29 +15,42 @@ class Registrations(db.Model):
     pursuing = db.Column(db.String(32), nullable=True)
     is_admin = db.Column(db.Boolean, nullable = False, default = False)
 
-    scores = db.relationship('Scores', backref='user', lazy=True)
-    user_inputs = db.relationship('UserInput', backref='user', lazy=True)
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
+    
+    @password.setter
+    def password(self, password):
+        salt = gensalt()
+        self.passhash = hashpw(password.encode("utf-8"), salt)
 
-class Subjects(db.Model):
+    def check_password(self, password):
+        return checkpw(password.encode("utf-8"), self.passhash)
+
+    scores = db.relationship('Scores', backref='user', lazy=True, cascade="all, delete-orphan")
+    user_inputs = db.relationship('UserInput', backref='user', lazy=True, cascade="all, delete-orphan")
+
+class Subjects(db.Model): #default __tablename__ = "subjects"
     id = db.Column(db.Integer, primary_key=True)
     subject = db.Column(db.String(64), nullable=False)
     subject_des = db.Column(db.String(250), nullable=True)
 
-    chapters = db.relationship('Chapters', backref='subject', lazy=True)
-    quizzes = db.relationship('Quizzes', backref='subject', lazy=True)
+    chapters = db.relationship('Chapters', backref='subject', lazy=True, cascade="all, delete-orphan")
+    quizzes = db.relationship('Quizzes', backref='subject', lazy=True, cascade="all, delete-orphan")
 
-class Chapters(db.Model):
+class Chapters(db.Model): #default __tablename__ = "chapters"
     id = db.Column(db.Integer, primary_key=True)
     subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), index=True)
     chapter = db.Column(db.String(64), nullable=False)
     chapter_des = db.Column(db.String(250), nullable=True)
 
-    quizzes = db.relationship('Quizzes', backref='chapter', lazy=True)
+    quizzes = db.relationship('Quizzes', backref='chapter', lazy=True, cascade="all, delete-orphan")
 
-class Quizzes(db.Model):
+class Quizzes(db.Model): #default __tablename__ = "quizzes"
     id = db.Column(db.Integer, primary_key=True)
     subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), index=True)
     chapter_id = db.Column(db.Integer, db.ForeignKey('chapters.id'), index=True)
+    title = db.Column(db.String(64), nullable=False)
     doa = db.Column(db.Date)
     time = db.Column(db.Integer, nullable=False)
     remarks = db.Column(db.String(250), nullable=True)
@@ -46,10 +59,11 @@ class Quizzes(db.Model):
     scores = db.relationship('Scores', backref='quiz', lazy=True)
     user_inputs = db.relationship('UserInput', backref='quiz', lazy=True)
 
-class Questions(db.Model):
+class Questions(db.Model): #default __tablename__ = "questions"
     id = db.Column(db.Integer, primary_key=True)
     quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'), index=True)
     question = db.Column(db.String(300), nullable=False)
+    title = db.Column(db.String(64), nullable=False)
     question_type = db.Column(db.String(32), nullable=False)
     option1 = db.Column(db.String(64), nullable=True)
     option2 = db.Column(db.String(64), nullable=True)
@@ -57,17 +71,18 @@ class Questions(db.Model):
     option4 = db.Column(db.String(64), nullable=True)
     numeric = db.Column(db.String(20), nullable=True)
     answer = db.Column(db.String(64), nullable=False)
+    weightage = db.Column(db.Integer, nullable=False)
 
     user_inputs = db.relationship('UserInput', backref='question', lazy=True)
 
-class UserInput(db.Model):
+class UserInput(db.Model): #default __tablename__ = "user_input"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('registrations.id'), index=True)
     quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'), index=True)
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), index=True)
     input_answer = db.Column(db.String(64), nullable=True)
 
-class Scores(db.Model):
+class Scores(db.Model): #default __tablename__ = "scores"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('registrations.id'), index=True)
     quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'), index=True)

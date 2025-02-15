@@ -1,1 +1,122 @@
 {% extends 'boilerplate.html' %}
+{% block title %}
+    Admin Dashboard
+{% endblock %}
+{% block style %}
+    <style>
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .row {
+            display: flex;
+            width: 50%;
+            margin: 5px;
+        }
+        .col {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin: 5px;
+        }        
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="container">
+        {% for subject in subjects %}
+            {% if loop.index0 % 2 == 0 %}
+            <div class="row">
+            {% endif %}
+            <div class="col">
+                <p title="{{subject.subject_des}}">{{subject.subject}}</p>
+                <table border="2">
+                    <tr>
+                        <th>ID</th>
+                        <th>Chapter Name</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for chapter in chapters %}
+                        {% if subject.id == chapter.subject_id %}
+                            <tr>
+                                <td>{{chapter.id}}</td>
+                                <td title="{{chapter.chapter_des}}">{{chapter.chapter}}</td>
+                                <td>
+                                    <button popovertarget="edit_chap_{{chapter.id}}">Edit</button>
+                                    /
+                                    <button popovertarget="del_chap_{{chapter.id}}">Delete</button>
+                                </td>
+                            </tr>
+
+                            <div id="edit_chap_{{chapter.id}}" popover>
+                                <button popovertarget="edit_chap_{{chapter.id}}" popovertargetaction="hide">X</button>
+                                <p>Update Chapter</p>
+                                <form action="{{url_for('edit_chapter', id=chapter.id)}}" method="post">
+                                    <div><label>Name: <input type="text" name="chapter" placeholder="{{chapter.chapter}}"></label></div>
+                                    <div><label>Description: <input type="text" name="chapter_des" placeholder="{{chapter.chapter_des}}"></label></div>
+                                    <input type="submit" value="Update">
+                                </form>
+                            </div>
+
+                            <div id="del_chap_{{chapter.id}}" popover>
+                                <button popovertarget="del_chap_{{chapter.id}}" popovertargetaction="hide">X</button>
+                                <p>Are you sure you want to delete this chapter?</p>
+                                <form action="{{url_for('del_chapter', id=chapter.id)}}" method="post">
+                                    <input type="submit" value="Delete">
+                                </form>
+                            </div>
+
+                        {% endif %}
+                    {% endfor %}
+                </table>
+
+                <button popovertarget="chapter_add_{{subject.id}}">Add Chapter</button>
+                <div id="chapter_add_{{subject.id}}" popover>
+                    <button popovertarget="chapter_add_{{subject.id}}" popovertargetaction="hide">X</button>
+                    <p>New Chapter</p>
+                    <form action="{{url_for('add_chapter', id=subject.id)}}" method="post">
+                        <div><label>Name: <input type="text" name="chapter" placeholder="Enter chapter name"></label></div>
+                        <div><label>Description: <input type="text" name="chapter_des" placeholder="Enter chapter description"></label></div>
+                        <input type="submit" value="Submit">
+                    </form>
+                </div>
+                <br>
+                <button popovertarget="edit_sub_{{subject.id}}">Edit Subject</button>
+                <div id="edit_sub_{{subject.id}}" popover>
+                    <button popovertarget="edit_sub_{{subject.id}}" popovertargetaction="hide">X</button>
+                    <p>Update Subject</p>
+                    <form action="{{url_for('edit_subject', id=subject.id)}}" method="post">
+                        <div><label>Name: <input type="text" name="subject" placeholder="{{subject.subject}}"></label></div>
+                        <div><label>Description: <input type="text" name="subject_des" placeholder="{{subject.subject_des}}"></label></div>
+                        <input type="submit" value="Update">
+                    </form>
+                </div>
+
+                <button popovertarget="del_sub_{{subject.id}}">Delete Subject</button>
+                <div id="del_sub_{{subject.id}}" popover>
+                    <button popovertarget="del_sub_{{subject.id}}" popovertargetaction="hide">X</button>
+                    <p>Are you sure you want to delete this subject?</p>
+                    <form action="{{url_for('del_subject', id=subject.id)}}" method="post">
+                        <input type="submit" value="Delete">
+                    </form>
+                </div>
+            </div>
+            {% if loop.index0 % 2 == 1 or loop.last %}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <button popovertarget="add_sub">Add Subject</button>
+    <div id="add_sub" popover>
+        <button popovertarget="add_sub" popovertargetaction="hide">X</button>
+        <p>New Subject</p>
+        <form action="{{url_for('add_subject')}}" method="post">
+            <div><label>Name: <input type="text" name="subject" placeholder="Enter subject name"></label></div>
+            <div><label>Description: <input type="text" name="subject_des" placeholder="Enter subject description"></label></div>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+{% endblock %}
+{% block script %}
+    
+{% endblock %}

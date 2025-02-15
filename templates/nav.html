@@ -12,21 +12,18 @@
             </li>
           {% if user.is_admin %}
             <li>
-              <a href="">Subjects</a>
+              <a href="{{url_for('quizzes')}}">Quizzes</a>
             </li>
             <li>
-              <a href="">User details</a>
+              <a href="{{url_for('users')}}">User details</a>
             </li>
           {% endif %}
           {% else %}
             <li>
-              <a href="{{url_for('login')}}">Login</a>
-            </li>
-            <li>
               <a href="{{url_for('registration')}}">Register</a>
             </li>
             <li>
-              <a href="{{url_for('logout')}}">Logout</a>
+              <a href="{{url_for('login')}}">Login</a>
             </li>
           {% endif %}
         </ul>
