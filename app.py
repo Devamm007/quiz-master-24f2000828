@@ -74,8 +74,9 @@ def login():
         if not user or not user.check_password(password):
             flash("Invalid username or password", "error")
             return redirect(url_for("login"))
+    login_user(user)
     flash("Login successful!", "success")
-    redirect(url_for("home"))    
+    return redirect(url_for("home"))    
 
 @app.route("/logout")
 @login_required
@@ -117,7 +118,7 @@ def registration():
         db.session.add(new_user) #no need to worry about starting/ending the session, as we are using ORM of SQLAlchemy and not SQL Query
         db.session.commit()
     flash("Successfully registered.", "success")
-    redirect(url_for("login"))
+    return redirect(url_for("login"))
 
 @app.route("/profile/delete", methods=["POST"])
 @login_required
@@ -133,7 +134,7 @@ def delete_account():
         flash("Your account has been successfully deleted.", "success")
         return redirect(url_for("login"))
     flash("User not found!", "error")
-    redirect(url_for("profile"))
+    return redirect(url_for("profile"))
 
 @app.route("/home")
 @login_required
@@ -268,7 +269,7 @@ def edit_chapter(id):
 @app.route("/admin/quizzes")
 @admin_auth
 def quizzes():
-    user=Registrations.query.get(session['user_id'])
+    user=Registrations.query.get(current_user.id)
     quizzes=Quizzes.query.all()
     questions=Questions.query.all()
     return render_template("quizzes.html", user=user, quizzes=quizzes, questions=questions)
@@ -276,7 +277,7 @@ def quizzes():
 @app.route("/admin/quizzes/<int:id>/view")
 @admin_auth
 def view_quiz(id):
-    user=Registrations.query.get(session['user_id'])
+    user=Registrations.query.get(current_user.id)
     quiz = Quizzes.query.get(id)
     chapter = Chapters.query.get(quiz.chapter_id)
     subject = Subjects.query.get(chapter.subject_id)
@@ -347,7 +348,7 @@ def add_question(id):
     weightage = int(request.form.get("weightage"))
 
     check = {"question":question, "title":title, "option1":option1, "option2":option2, "option3":option3, "option4":option4, "answer":answer}
-    for k, v in check:
+    for k, v in check.items():
         if not v:
             flash(f"Please fill {k} field.", "error")
             return redirect(url_for("quizzes"))
@@ -400,12 +401,16 @@ def del_model(model, id):
         "question": Questions,
     }
 
+    if model not in models:
+        flash("Invalid model.", "error")
+        return redirect(url_for("admin"))
+
     instance_to_delete = models[model].query.get(id)
     if instance_to_delete:
         db.session.delete(instance_to_delete)
         db.session.commit()
-    flash(f"{model.capitalize()} deleted successfully!", "success")
 
+    flash(f"{model.capitalize()} deleted successfully!", "success")
     if model == "quiz" or model == "question":
         return redirect(url_for("quizzes"))
     return redirect(url_for("admin"))
