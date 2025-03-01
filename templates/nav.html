@@ -1,32 +1,32 @@
 <nav>
+  <div>
+    <a href="/home">QuizVerse</a>
     <div>
-      <a href="/home">QuizVerse</a>
-      <div>
-        <ul>
-          {% if user%}
-            <li>
-              <a href="{{url_for('profile')}}">Profile</a>
-            </li>
-            <li>
-              <a href="{{url_for('logout')}}">Logout</a>
-            </li>
-          {% if user.is_admin %}
-            <li>
-              <a href="{{url_for('quizzes')}}">Quizzes</a>
-            </li>
-            <li>
-              <a href="{{url_for('users')}}">User details</a>
-            </li>
-          {% endif %}
-          {% else %}
-            <li>
-              <a href="{{url_for('registration')}}">Register</a>
-            </li>
-            <li>
-              <a href="{{url_for('login')}}">Login</a>
-            </li>
-          {% endif %}
-        </ul>
-      </div>
+      <ul>
+        {% if user%}
+          <li>
+            <a href="{{url_for('profile')}}">Profile</a>
+          </li>
+          <li>
+            <a href="{{url_for('logout')}}">Logout</a>
+          </li>
+        {% if user.is_admin %}
+          <li>
+            <a href="{{url_for('quizzes')}}">Quizzes</a>
+          </li>
+          <li>
+            <a href="{{url_for('users')}}">User details</a>
+          </li>
+        {% endif %}
+        {% else %}
+          <li>
+            <a href="{{url_for('registration')}}">Register</a>
+          </li>
+          <li>
+            <a href="{{url_for('login')}}">Login</a>
+          </li>
+        {% endif %}
+      </ul>
     </div>
-  </nav>
+  </div>
+</nav>

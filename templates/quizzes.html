@@ -21,7 +21,7 @@
             }        
         </style>
     {% endblock %}
-    {% block content %}
+{% block content %}
     <div class="container">
         {% for quiz in quizzes %}
             {% if loop.index0 % 2 == 0 %}
@@ -32,7 +32,7 @@
                 <table border="2">
                     <tr>
                         <th>ID</th>
-                        <th>Question</th>
+                        <th>Question's Title</th>
                         <th>Action</th>
                     </tr>
                     {% for question in questions %}
@@ -42,7 +42,6 @@
                                 <td title="{{question.question}}">{{question.title}}</td>
                                 <td>
                                     <button popovertarget="editq{{question.id}}">Edit</button>
-                                    /
                                     <button popovertarget="delq{{question.id}}">Delete</button>
                                 </td>
                             </tr>
@@ -55,32 +54,15 @@
                                         <label>Question type:
                                             <select id="question_type" name="question_type">
                                                 <option value = "single_correct" {% if single_correct|string == question.question_type %}selected{% endif %}>Single correct MCQ</option>
-                                                <!-- <option value = "multi_correct" {% if multi_correct|string == question.question_type %}selected{% endif %}>Multi correct MCQ</option>
-                                                <option value = "numeric" {% if numeric|string == question.question_type %}selected{% endif %}>Numeric</option> -->
                                             </select>
                                         </label>
                                     </div>
-                                    <div><label>Question: <input name="question" type="text" placeholder="{{question.question}}"></label></div>
-                                    <div><label>Question Title: <input name="title" type="text" placeholder="{{question.title}}"></label></div>
-                                    <div><label>Option a: <input name="option1" type="text" placeholder="{{question.option1}}"></label></div>
-                                    <div><label>Option b: <input name="option2" type="text" placeholder="{{question.option2}}"></label></div>
-                                    <div><label>Option c: <input name="option3" type="text" placeholder="{{question.option3}}"></label></div>
-                                    <div><label>Option d: <input name="option4" type="text" placeholder="{{question.option4}}"></label></div>
-                                    <!-- {% if question_type == "single_correct" %}
-                                        <div><label>Option a: <input name="option1" type="text" placeholder="{{question.option1}}"></label></div>
-                                        <div><label>Option b: <input name="option2" type="text" placeholder="{{question.option2}}"></label></div>
-                                        <div><label>Option c: <input name="option3" type="text" placeholder="{{question.option3}}"></label></div>
-                                        <div><label>Option d: <input name="option4" type="text" placeholder="{{question.option4}}"></label></div>
-                                    {% endif %}                        
-                                    {% if question_type == "multi_correct" %}
-                                        <div><label>Option a: <input name="option1" type="text" placeholder="{{question.option1}}"></label></div>
-                                        <div><label>Option b: <input name="option2" type="text" placeholder="{{question.option2}}"></label></div>
-                                        <div><label>Option c: <input name="option3" type="text" placeholder="{{question.option3}}"></label></div>
-                                        <div><label>Option d: <input name="option4" type="text" placeholder="{{question.option4}}"></label></div>
-                                    {% endif %}
-                                    {% if question_type == "numeric" %}
-                                        <div><label>Numeric answer: <input name="numeric" type="number" placeholder="{{question.numeric}}"></label></div>
-                                    {% endif %} -->
+                                    <div><label>Question: <input name="question" type="text" value="{{question.question}}"></label></div>
+                                    <div><label>Question Title: <input name="title" type="text" value="{{question.title}}"></label></div>
+                                    <div><label>Option a: <input name="option1" type="text" value="{{question.option1}}"></label></div>
+                                    <div><label>Option b: <input name="option2" type="text" value="{{question.option2}}"></label></div>
+                                    <div><label>Option c: <input name="option3" type="text" value="{{question.option3}}"></label></div>
+                                    <div><label>Option d: <input name="option4" type="text" value="{{question.option4}}"></label></div>
                                     <div>
                                         <label>Answer: 
                                             <select id="answer" name="answer">
@@ -91,7 +73,7 @@
                                             </select>
                                         </label>
                                     </div>
-                                    <div><label>Weightage: <input name="weightage" type="number" placeholder="{{question.weightage}}"></label></div>
+                                    <div><label>Weightage: <input name="weightage" min="1" step="1" max="10" type="number" value="{{question.weightage}}"></label></div>
                                     <input type="submit" value="Update">
                                 </form>
                             </div>
@@ -99,7 +81,7 @@
                             <div id="delq{{question.id}}" popover>
                                 <button popovertarget="delq{{question.id}}" popovertargetaction="hide">X</button>
                                 <p>Are you sure you want to delete this question?</p>
-                                <form action="{{url_for('del_question', id=question.id)}}" method="post">
+                                <form action="{{url_for('del_model', model='question', id=question.id)}}" method="post">
                                     <input type="submit" value="Delete">
                                 </form>
                             </div>
@@ -116,8 +98,6 @@
                             <label>Question type:
                                 <select id="question_type" name="question_type">
                                     <option value = "single_correct">Single correct MCQ</option>
-                                    <!-- <option value = "multi_correct">Multi correct MCQ</option>
-                                    <option value = "numeric">Numeric</option> -->
                                 </select>
                             </label>
                         </div>
@@ -127,21 +107,6 @@
                         <div><label>Option b: <input name="option2" type="text" required></label></div>
                         <div><label>Option c: <input name="option3" type="text" required></label></div>
                         <div><label>Option d: <input name="option4" type="text" required></label></div>
-                        <!-- {% if question_type == "single_correct" %}
-                            <div><label>Option a: <input name="option1" type="text" required></label></div>
-                            <div><label>Option b: <input name="option2" type="text" required></label></div>
-                            <div><label>Option c: <input name="option3" type="text" required></label></div>
-                            <div><label>Option d: <input name="option4" type="text" required></label></div>
-                        {% endif %}                        
-                        {% if question_type == "multi_correct" %}
-                            <div><label>Option a: <input name="option1" type="text" required></label></div>
-                            <div><label>Option b: <input name="option2" type="text" required></label></div>
-                            <div><label>Option c: <input name="option3" type="text" required></label></div>
-                            <div><label>Option d: <input name="option4" type="text" required></label></div>
-                        {% endif %}
-                        {% if question_type == "numeric" %}
-                            <div><label>Numeric answer: <input name="numeric" type="number" required></label></div>
-                        {% endif %} -->
                         <div>
                             <label>Answer: 
                                 <select id="answer" name="answer">
@@ -157,24 +122,26 @@
                     </form>
                 </div>
                 <br>
+                <form style="display: inline;" action="{{url_for('view_quiz', id=quiz.id)}}" method="get">
+                    <button type="submit" title="chapter_id={{quiz.chapter_id}}">View Quiz</button>
+                </form>
                 <button popovertarget="editquiz{{quiz.id}}">Edit Quiz</button>
                 <div id="editquiz{{quiz.id}}" popover>
                     <button popovertarget="editquiz{{quiz.id}}" popovertargetaction="hide">X</button>
                     <p>Update Quiz</p>
-                    <form action="{{url_for('edit_quiz', id=quiz.id)}}" method="post">
-                        <div><label>Title: <input name="title" type="text" placeholder="quiz's title"></label></div>
-                        <div><label>Attempt date: <input name="doa" type="date"></label></div>
-                        <div><label>Duration (in minutes): <input name="time" type="number"></label></div>
-                        <div><label>Remarks: <input name="remarks" type="text" placeholder="Enter any remark for students"></label></div>
+                    <form action="{{url_for('edit_quiz', id=quiz.id, quiz=quiz)}}" method="post">
+                        <div><label>Title: <input name="title" type="text" value="{{quiz.title}}"></label></div>
+                        <div><label>Attempt date: <input name="doa" type="date" value="{{quiz.doa}}"></label></div>
+                        <div><label>Duration (in minutes): <input name="time" type="number" value="{{quiz.time}}"></label></div>
+                        <div><label>Remarks: <input name="remarks" type="text" value="{{quiz.remarks}}"></label></div>
                         <input type="submit" value="Update">
                     </form>
                 </div>
-
                 <button popovertarget="delquiz{{quiz.id}}">Delete Quiz</button>
                 <div id="delquiz{{quiz.id}}" popover>
                     <button popovertarget="delquiz{{quiz.id}}" popovertargetaction="hide">X</button>
                     <p>Are you sure you want to delete this quiz?</p>
-                    <form action="{{url_for('del_quiz', id=quiz.id)}}" method="post">
+                    <form action="{{url_for('del_model', model='quiz', id=quiz.id)}}" method="post">
                         <input type="submit" value="Delete">
                     </form>
                 </div>

@@ -1,11 +1,21 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from bcrypt import checkpw, gensalt, hashpw
+from flask_bcrypt import Bcrypt
 from app import app
+from flask_login import UserMixin
 
 db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
 
-class Registrations(db.Model): #default __tablename__ = "registrations"
+'''
+Do implement CheckConstraint at end to ensure data integrity with multi-layered data validation.
+Ensures database-level enforcement and consistency (as a databse maybe accessed by different application or services),
+more performance as database is optimised accordingly,
+reduced bypass risk, because chance of multiple entry points to this database,
+So implement data validation in frontend, application level, database level, and even API level (If I am left with time to build APIs)
+'''
+
+class Registrations(UserMixin, db.Model): #default __tablename__ = "registrations"
     id = db.Column(db.Integer, primary_key=True)
     fullname = db.Column(db.String(32), nullable=True)
     username = db.Column(db.String(32), unique=True)
@@ -18,14 +28,13 @@ class Registrations(db.Model): #default __tablename__ = "registrations"
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
-    
+
     @password.setter
     def password(self, password):
-        salt = gensalt()
-        self.passhash = hashpw(password.encode("utf-8"), salt)
+        self.passhash = bcrypt.generate_password_hash(password).decode('utf-8')
 
     def check_password(self, password):
-        return checkpw(password.encode("utf-8"), self.passhash)
+        return bcrypt.check_password_hash(self.passhash, password)
 
     scores = db.relationship('Scores', backref='user', lazy=True, cascade="all, delete-orphan")
     user_inputs = db.relationship('UserInput', backref='user', lazy=True, cascade="all, delete-orphan")
@@ -72,6 +81,8 @@ class Questions(db.Model): #default __tablename__ = "questions"
     numeric = db.Column(db.String(20), nullable=True)
     answer = db.Column(db.String(64), nullable=False)
     weightage = db.Column(db.Integer, nullable=False)
+    # NoSQL (semi-structured) better for this,
+    # because there are different type of question for which we have to store different attributes
 
     user_inputs = db.relationship('UserInput', backref='question', lazy=True)
 
@@ -89,15 +100,14 @@ class Scores(db.Model): #default __tablename__ = "scores"
     attempt_number = db.Column(db.Integer, nullable=False)
     start_time = db.Column(db.DateTime, server_default=db.func.now())
     score = db.Column(db.Integer)
-    __table_args__ = (db.UniqueConstraint('user_id', 'quiz_id', 'attempt_number', name='uq_user_quiz_attempt'),)
+    __table_args__ = (db.UniqueConstraint('user_id', 'quiz_id', 'attempt_number', name='quiz_attempt'),)
 
 with app.app_context():
     db.create_all()
     # admin creation
     admin = Registrations.query.filter_by(is_admin=True).first()
     if not admin:
-        salt = gensalt()
-        password_hash = hashpw("Aa65@2007".encode('utf-8'), salt)
+        password_hash = bcrypt.generate_password_hash("Aa65@2007").decode('utf-8')
         admin = Registrations(fullname="admin", username="admin", email="adminquizverse49@gmail.com", passhash=password_hash, is_admin=True)
         db.session.add(admin)
         db.session.commit()

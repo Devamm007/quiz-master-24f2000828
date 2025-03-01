@@ -1,0 +1,31 @@
+{% extends 'boilerplate.html' %}
+{% block title %}
+    Quiz-{{quiz.title}}
+{% endblock %}
+{% block style %}
+    
+{% endblock %}
+{% block content %}
+    <p>
+        {{subject.subject}}
+        <br>
+        {{chapter.chapter}} (Chapter ID: {{chapter.id}})
+        <br>
+        {{quiz.doa}} | Duration: {{quiz.time}} minutes
+    </p>
+    {% for question in questions %}
+        <div>
+                Title: {{question.title}}<br>
+                Question <b>{{loop.index}}</b>: {{question.question}}<br>
+                Option1: {{question.option1}}<br>
+                Option2: {{question.option2}}<br>
+                Option3: {{question.option3}}<br>
+                Option4: {{question.option4}}<br>
+                Answer: {{question.answer}}<br>
+                Weightage: {{question.weightage}}<br><br>
+        </div>
+    {% endfor %}
+{% endblock %}
+{% block script %}
+    
+{% endblock %}
