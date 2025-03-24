@@ -554,12 +554,10 @@ if  __name__ == "__main__":
     app.run(debug=True)
 
 '''
-ADD() KA FUNCTION SIMILAR TO UPDATE() [POST]
-Scores displaying page,
+ADD() ka function similar to UPDATE(),
 Displaying due date passed quizzes, current quizzes,
 admin can make a quiz hide or unseen from users feature,
 USER CHARTS,
-DATE IMPLEMENTATIONS,
 CSS/BOOTSTRAP,
 APIs
 '''
