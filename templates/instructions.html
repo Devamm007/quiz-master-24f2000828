@@ -1,0 +1,28 @@
+{% extends 'boilerplate.html' %}
+{% block title %}
+    Instructions-{{quiz.title}}
+{% endblock %}
+{% block style %}
+    
+{% endblock %}
+{% block content %}
+    <li>Chapter: {{chapter}}</li>
+    <li>Time to attempt this quiz is {{quiz.time}} minutes.</li>
+    <li>Number of questions: {{noq}}</li>
+    <li>Due Date: {{quiz.doa.strftime('%a, %b %d')}}</li>
+    {% if last_attempt == 2 %}
+    <li>This is your last attempt.</li>   
+    <a href="{{url_for('attempt_quiz', quiz_id=quiz.id)}}">Attempt</a>
+    {% elif last_attempt == 1 %}
+    <li>You have attempted your quiz one time.</li>
+    <a href="{{url_for('attempt_quiz', quiz_id=quiz.id)}}">Attempt</a>
+    {% elif last_attempt == None %}
+    <li>You are attempting the quiz first time.</li>
+    <a href="{{url_for('attempt_quiz', quiz_id=quiz.id)}}">Attempt</a>
+    {% elif last_attempt == 3 %}
+    <li>You have attempted this quiz maximum number of times.</li>
+    {% endif %}  
+{% endblock %}
+{% block script %}
+    
+{% endblock %}

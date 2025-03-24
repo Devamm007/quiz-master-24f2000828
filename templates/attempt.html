@@ -1,0 +1,59 @@
+{% extends 'boilerplate.html' %}
+{% block title %}
+    Quiz-{{quiz.title}}
+{% endblock %}
+{% block style %}
+{% endblock %}
+{% block content %}
+    <div id="timer-display">Time Remaining: <span id="time-left">00:00</span></div>
+    <form action="{{url_for('submit_quiz', quiz_id=quiz.id)}}" method="post">
+        {% for question in questions %}
+            <p>{{question.question}} | Points: {{question.weightage}}</p>
+            <input type="radio" value="1" name="{{question.id}}">{{question.option1}}
+            <input type="radio" value="2" name="{{question.id}}">{{question.option2}}
+            <input type="radio" value="3" name="{{question.id}}">{{question.option3}}
+            <input type="radio" value="4" name="{{question.id}}">{{question.option4}}
+            <input type="radio" value=None name="{{question.id}}" checked>Clear selection
+        {% endfor %}
+        <input id="submit-btn" type="submit" value="Submit">
+    </form>
+{% endblock %}
+{% block script %}
+<script>
+    // Set the time limit in seconds
+    const timeLimit = {{quiz.time*60}}; // 5 minutes
+
+    // Initialize the timer
+    let timeLeft = timeLimit-{{timer}};
+    let timerInterval;
+
+    // Function to update the timer display
+    function updateTimerDisplay() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        document.getElementById("time-left").innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                alert("Time's up!")
+                document.getElementById("submit-btn").click(); // Auto-submit the form
+            }
+        }, 1000);
+    }
+
+    document.addEventListener("DOMContentLoaded", startTimer())
+
+    // Prevent form from submitting normally
+    document.getElementById("quiz-form").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent default form submission
+        // Handle form submission logic here
+        console.log("Quiz submitted succesfully!");
+    });
+</script>
+{% endblock %}
+
