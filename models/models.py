@@ -1,11 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_bcrypt import Bcrypt
-from app import app
 from flask_login import UserMixin
 
-db = SQLAlchemy(app)
-bcrypt = Bcrypt(app)
+db = SQLAlchemy()
+bcrypt = Bcrypt()
 
 '''
 Do implement CheckConstraint at end to ensure data integrity with multi-layered data validation.
@@ -65,8 +64,8 @@ class Quizzes(db.Model): #default __tablename__ = "quizzes"
     remarks = db.Column(db.String(250), nullable=True)
 
     questions = db.relationship('Questions', backref='quiz', lazy=True, cascade="all, delete-orphan")
-    scores = db.relationship('Scores', backref='quiz', lazy=True)
-    user_inputs = db.relationship('UserInput', backref='quiz', lazy=True)
+    scores = db.relationship('Scores', backref='quiz', lazy=True, cascade="all, delete-orphan")
+    user_inputs = db.relationship('UserInput', backref='quiz', lazy=True, cascade="all, delete-orphan")
 
 class Questions(db.Model): #default __tablename__ = "questions"
     id = db.Column(db.Integer, primary_key=True)
@@ -81,9 +80,7 @@ class Questions(db.Model): #default __tablename__ = "questions"
     numeric = db.Column(db.String(20), nullable=True)
     answer = db.Column(db.String(64), nullable=False)
     weightage = db.Column(db.Integer, nullable=False)
-    # NoSQL (semi-structured) better for this,
-    # because there are different type of question for which we have to store different attributes
-
+    
     user_inputs = db.relationship('UserInput', backref='question', lazy=True)
 
 class UserInput(db.Model): #default __tablename__ = "user_input"
@@ -91,6 +88,7 @@ class UserInput(db.Model): #default __tablename__ = "user_input"
     user_id = db.Column(db.Integer, db.ForeignKey('registrations.id'), index=True)
     quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'), index=True)
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), index=True)
+    attempt_number = db.Column(db.Integer, nullable=False)
     input_answer = db.Column(db.String(64), nullable=True)
 
 class Scores(db.Model): #default __tablename__ = "scores"
@@ -101,13 +99,3 @@ class Scores(db.Model): #default __tablename__ = "scores"
     start_time = db.Column(db.DateTime, server_default=db.func.now())
     score = db.Column(db.Integer)
     __table_args__ = (db.UniqueConstraint('user_id', 'quiz_id', 'attempt_number', name='quiz_attempt'),)
-
-with app.app_context():
-    db.create_all()
-    # admin creation
-    admin = Registrations.query.filter_by(is_admin=True).first()
-    if not admin:
-        password_hash = bcrypt.generate_password_hash("Aa65@2007").decode('utf-8')
-        admin = Registrations(fullname="admin", username="admin", email="adminquizverse49@gmail.com", passhash=password_hash, is_admin=True)
-        db.session.add(admin)
-        db.session.commit()

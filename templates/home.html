@@ -3,26 +3,28 @@
     Student Dashboard
 {% endblock %}
 {% block style %}
-<style>
-    .container {
-        display: flex;
-        flex-wrap: wrap;
-    }
-    .row {
-        display: flex;
-        width: 50%;
-        margin: 5px;
-    }
-    .col {
-        flex: 1;
-        padding: 10px;
-        border: 1px solid #ccc;
-        margin: 5px;
-    }        
-</style>
+
 {% endblock %}
 {% block content %}
-    
+    {% for subject in subjects %}
+    <div style="border: 2px solid #ccc">
+        <p title="{{subject.subject_des}}">{{subject.subject}}</p>
+        {% set subject_quizzes = quizzes|selectattr('subject_id', 'equalto', subject.id) %}
+            {% if not subject_quizzes | list %}
+                <p>No quizzes yet.</p>
+            {% else %}
+                {% for quiz in quizzes %}
+                    {% if quiz.subject_id == subject.id %}
+                        {% set chapter = chapters|selectattr('id', 'equalto', quiz.chapter_id) %}
+                        <p title="{{chapter.chapter}} | {{chapter.chapter_des}}">{{quiz.title}} | 
+                            Due Date: {{quiz.doa.strftime('%a, %b %d')}} | Duration: {{quiz.time}} minutes</p>
+                        <a href="{{url_for('instructions', quiz_id=quiz.id)}}">Attempt</a> (Max. Attempts: 3)
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            <p>{{quiz_questions}}</p>
+    </div>
+    {% endfor %}
 {% endblock %}
 {% block script %}
     

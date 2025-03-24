@@ -12,6 +12,7 @@
             <th>E-Mail</th>
             <th>DOB</th>
             <th>Pursuing</th>
+            <th>Scores</th>
         </tr>
         {% for user in users %}
             <tr>
@@ -19,6 +20,7 @@
                 <td>{{user.email}}</td>
                 <td>{{user.dob.strftime('%d-%m-%Y')}}</td>
                 <td>{{user.pursuing}}</td>
+                <td><a href="{{url_for('scores_admin', user_id=user.id)}}">View</a></td>
             </tr>
         {% endfor %}
     </table>
