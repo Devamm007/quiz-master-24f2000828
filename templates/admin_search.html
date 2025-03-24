@@ -1,0 +1,226 @@
+{% extends 'boilerplate.html' %}
+{% block title %}
+    Admin Search
+{% endblock %}
+{% block style %}
+    
+{% endblock %}
+{% block content %}
+    <form method="post">
+        <div>
+            <div><label>Search: <input type="text" placeholder="search" name="search" value="{{search}}"></label></div>
+        </div>
+        <input type="submit" value="Enter">
+    </form>
+
+    {% if search %}
+        {% if data1 %}
+        <table border="2"> <!-- style="border: 2px solid black;"> -->
+            <tr>
+                <th>Name</th>
+                <th>E-Mail</th>
+                <th>DOB</th>
+                <th>Pursuing</th>
+            </tr>
+            {% for user in data1 %}
+            <tr>
+                <td>{{user.fullname}}</td>
+                <td>{{user.email}}</td>
+                {% if user.dob %}
+                <td>{{user.dob.strftime('%d-%m-%Y')}}</td>
+                {% else %}
+                <td></td>
+                {% endif %}
+                <td>{{user.pursuing}}</td>
+            </tr>
+            {% endfor %}
+        </table>        
+        {% endif %}
+
+        {% if data2 %}
+        <table border="2"> <!-- style="border: 2px solid black;"> -->
+            <tr>
+                <th>Subject ID</th>
+                <th>Subject</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+            {% for subject in data2 %}
+            <tr>
+                <td>{{subject.id}}</td>
+                <td>{{subject.subject}}</td>
+                <td>{{subject.subject_des}}</td>
+                <td>
+                    <div style="display:inline-block">
+                        <button popovertarget="edit_sub_{{subject.id}}">Edit Subject</button>
+                        <form action="{{url_for('del_model', model='subject', id=subject.id)}}" method="post" onsubmit="return confirm('Are you sure you want to delete this subject? This action cannot be undone.');">
+                            <input type="submit" value="Delete Subject">
+                        </form>
+                    </div>
+                    
+                </td>
+            </tr>
+            <div id="edit_sub_{{subject.id}}" popover>
+                <button popovertarget="edit_sub_{{subject.id}}" popovertargetaction="hide">X</button>
+                <p>Update Subject</p>
+                <form action="{{url_for('edit_subject', id=subject.id)}}" method="post">
+                    <div><label>Name: <input type="text" name="subject" value="{{subject.subject}}"></label></div>
+                    <div><label>Description: <input type="text" name="subject_des" value="{{subject.subject_des}}"></label></div>
+                    <input type="submit" value="Update">
+                </form>
+            </div>
+            {% endfor %}
+        </table>        
+        {% endif %}
+
+        {% if data3 %}
+        <table border="2"> <!-- style="border: 2px solid black;"> -->
+            <tr>
+                <th>Chapter ID</th>
+                <th>Chapter</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+            {% for chapter in data3 %}
+            <tr>
+                <td>{{chapter.id}}</td>
+                <td>{{chapter.chapter}}</td>
+                <td>{{chapter.chapter_des}}</td>
+                <td>
+                    <div style="display:inline-block">
+                        <button popovertarget="edit_chap_{{chapter.id}}">Edit</button>
+                        <form action="{{url_for('del_model', model='chapter', id=chapter.id)}}" method="post" onsubmit="return confirm('Are you sure you want to delete this chapter? This action cannot be undone.');">
+                            <input type="submit" value="Delete">
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            <div id="edit_chap_{{chapter.id}}" popover>
+                <button popovertarget="edit_chap_{{chapter.id}}" popovertargetaction="hide">X</button>
+                <p>Update Chapter</p>
+                <form action="{{url_for('edit_chapter', id=chapter.id)}}" method="post">
+                    <div><label>Name: <input type="text" name="chapter" value="{{chapter.chapter}}"></label></div>
+                    <div><label>Description: <input type="text" name="chapter_des" value="{{chapter.chapter_des}}"></label></div>
+                    <input type="submit" value="Update">
+                </form>
+            </div>
+            {% endfor %}
+        </table>        
+        {% endif %}
+
+        {% if data4 %}
+            {% for quiz in data4 %}
+            <h3>Quiz Title: {{ quiz.title }} | ID: {{quiz.id}}</h3>
+            <form style="display: inline;" action="{{url_for('view_quiz', id=quiz.id)}}" method="get">
+                <button type="submit" title="chapter_id={{quiz.chapter_id}}">View Quiz</button>
+            </form>
+            <button popovertarget="editquiz{{quiz.id}}">Edit Quiz</button>
+            <div id="editquiz{{quiz.id}}" popover>
+                <button popovertarget="editquiz{{quiz.id}}" popovertargetaction="hide">X</button>
+                <p>Update Quiz</p>
+                <form action="{{url_for('edit_quiz', id=quiz.id, quiz=quiz)}}" method="post">
+                    <div><label>Title: <input name="title" type="text" value="{{quiz.title}}"></label></div>
+                    <div><label>Attempt date (DOA): <input name="doa" type="date" value="{{quiz.doa}}"></label></div>
+                    <div><label>Duration (in minutes): <input name="time" type="number" value="{{quiz.time}}"></label></div>
+                    <div><label>Remarks: <input name="remarks" type="text" value="{{quiz.remarks}}"></label></div>
+                    <input type="submit" value="Update">
+                </form>
+            </div>
+            <form action="{{url_for('del_model', model='quiz', id=quiz.id)}}" method="post" onsubmit="return confirm('Are you sure you want to delete this quiz? This action cannot be undone.');">
+                <input type="submit" value="Delete Quiz">
+            </form>
+            <table border="2">
+                <tr>
+                    <th>Question ID</th>
+                    <th>Question Title</th>
+                    <th>Question</th>
+                    <th>Actions</th>
+                </tr>
+                {% for question in quiz.questions %}
+                    <tr>
+                        <td>{{ question.id }}</td>
+                        <td>{{ question.title }}</td>
+                        <td>{{ question.question }}</td>
+                        <td>
+                            <button popovertarget="editq{{question.id}}">Edit</button>
+                            <form action="{{url_for('del_model', model='question', id=question.id)}}" method="post" onsubmit="return confirm('Are you sure you want to delete this question? This action cannot be undone.');">
+                                <input type="submit" value="Delete">
+                            </form>
+                        </td>
+                    </tr>
+
+                    <div id="editq{{question.id}}" popover>
+                        <button popovertarget="editq{{question.id}}" popovertargetaction="hide">X</button>
+                        <p>Update Question</p>
+                        <form action="{{url_for('edit_question', id=question.id)}}" method="post">
+                            <div>
+                                <label>Question type:
+                                    <select id="question_type" name="question_type">
+                                        <option value = "single_correct" {% if single_correct|string == question.question_type %}selected{% endif %}>Single correct MCQ</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div><label>Question: <input name="question" type="text" value="{{question.question}}"></label></div>
+                            <div><label>Question Title: <input name="title" type="text" value="{{question.title}}"></label></div>
+                            <div><label>Option a: <input name="option1" type="text" value="{{question.option1}}"></label></div>
+                            <div><label>Option b: <input name="option2" type="text" value="{{question.option2}}"></label></div>
+                            <div><label>Option c: <input name="option3" type="text" value="{{question.option3}}"></label></div>
+                            <div><label>Option d: <input name="option4" type="text" value="{{question.option4}}"></label></div>
+                            <div>
+                                <label>Answer: 
+                                    <select id="answer" name="answer">
+                                        <option value=1 {% if 1|string == question.answer %}selected{% endif %}>option a</option>
+                                        <option value=2 {% if 2|string == question.answer %}selected{% endif %}>option b</option>
+                                        <option value=3 {% if 3|string == question.answer %}selected{% endif %}>option c</option>
+                                        <option value=4 {% if 4|string == question.answer %}selected{% endif %}>option d</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div><label>Weightage: <input name="weightage" min="1" step="1" max="10" type="number" value="{{question.weightage}}"></label></div>
+                            <input type="submit" value="Update">
+                        </form>
+                    </div>
+                {% endfor %}
+            </table>
+            <button popovertarget="addq{{quiz.id}}">Add Question</button>
+            <div id="addq{{quiz.id}}" popover>
+                <button popovertarget="addq{{quiz.id}}" popovertargetaction="hide">X</button>
+                <p>New Question</p>
+                <form action="{{url_for('add_question', id=quiz.id)}}" method="post">
+                    <div>
+                        <label>Question type:
+                            <select id="question_type" name="question_type">
+                                <option value = "single_correct">Single correct MCQ</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div><label>Question: <input name="question" type="text" required></label></div>
+                    <div><label>Question Title: <input name="title" type="text" required></label></div>
+                    <div><label>Option a: <input name="option1" type="text" required></label></div>
+                    <div><label>Option b: <input name="option2" type="text" required></label></div>
+                    <div><label>Option c: <input name="option3" type="text" required></label></div>
+                    <div><label>Option d: <input name="option4" type="text" required></label></div>
+                    <div>
+                        <label>Answer: 
+                            <select id="answer" name="answer">
+                                <option value=1>option a</option>
+                                <option value=2>option b</option>
+                                <option value=3>option c</option>
+                                <option value=4>option d</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div><label>Weightage: <input name="weightage" type="number" required></label></div>
+                    <input type="submit" value="Submit">
+                </form>
+            </div>
+            {% endfor %}       
+        {% endif %}
+
+    {% endif %}
+
+
+{% endblock %}
+{% block script %}
+    
+{% endblock %}

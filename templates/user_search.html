@@ -1,0 +1,66 @@
+{% extends 'boilerplate.html' %}
+{% block title %}
+    Admin Search
+{% endblock %}
+{% block style %}
+    
+{% endblock %}
+{% block content %}
+    <form method="post">
+        <div>
+            <div><label>Search: <input type="text" placeholder="search" name="search" value="{{search}}"></label></div>
+        </div>
+        <input type="submit" value="Enter">
+    </form>
+
+    {% if search %}
+        {% if data2 %}
+        <table border="2"> <!-- style="border: 2px solid black;"> -->
+            <tr>
+                <th>Subject ID</th>
+                <th>Subject</th>
+                <th>Description</th>
+            </tr>
+            {% for subject in data2 %}
+            <tr>
+                <td>{{subject.id}}</td>
+                <td>{{subject.subject}}</td>
+                <td>{{subject.subject_des}}</td>
+            </tr>
+            {% endfor %}
+        </table>        
+        {% endif %}
+
+        {% if data3 %}
+        <table border="2"> <!-- style="border: 2px solid black;"> -->
+            <tr>
+                <th>Chapter ID</th>
+                <th>Chapter</th>
+                <th>Description</th>
+            </tr>
+            {% for chapter in data3 %}
+            <tr>
+                <td>{{chapter.id}}</td>
+                <td>{{chapter.chapter}}</td>
+                <td>{{chapter.chapter_des}}</td>
+            </tr>
+            
+            {% endfor %}
+        </table>        
+        {% endif %}
+
+        {% if data4 %}
+            {% for quiz in data4 %}
+            <h4>Quiz Title: {{ quiz.title }} | ID: {{quiz.id}}</h4>
+            Due Date: {{quiz.doa.strftime('%a, %b %d')}} | Duration: {{quiz.time}} minutes</p>
+            <a href="{{url_for('instructions', quiz_id=quiz.id)}}">Attempt</a>
+            {% endfor %}       
+        {% endif %}
+
+    {% endif %}
+
+
+{% endblock %}
+{% block script %}
+    
+{% endblock %}
