@@ -11,7 +11,7 @@
         <br>
         {{chapter.chapter}} (Chapter ID: {{chapter.id}})
         <br>
-        {{quiz.doa}} | Duration: {{quiz.time}} minutes
+        {{quiz.doa.strftime('%d-%m-%Y, %H:%M')}} | Duration: {{quiz.time}} minutes
     </p>
     {% for question in questions %}
         <div>

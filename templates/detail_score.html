@@ -14,11 +14,11 @@
             <p {% if input.question.answer == '3' %} style="background-color: rgba(29, 122, 0, 0.5)" {% elif input.input_answer == '3' %} style="background-color: rgba(255, 0, 0, 0.5)" {% endif %}>(c) {{input.question.option3}}</p>
             <p {% if input.question.answer == '4' %} style="background-color: rgba(29, 122, 0, 0.5)" {% elif input.input_answer == '4' %} style="background-color: rgba(255, 0, 0, 0.5)" {% endif %}>(d) {{input.question.option4}}</p>
             {% if input.input_answer == input.question.answer %}
-            <p>Correct</p>             
-            {% elif not input.input_answer %}
-            <p>Unattempted</p>   
-            {% elif input.input_answer != input.question.answer %}
-            <p>Incorrect</p>
+            <p>Correct</p>              
+            {% elif input.input_answer == "None" %}
+            <p>Unattempted</p>
+            {% else %}
+            <p>Incorrect</p>  
             {% endif %}
             <br>
         </div>

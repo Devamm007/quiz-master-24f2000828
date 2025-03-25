@@ -52,8 +52,12 @@
         {% if data4 %}
             {% for quiz in data4 %}
             <h4>Quiz Title: {{ quiz.title }} | ID: {{quiz.id}}</h4>
-            Due Date: {{quiz.doa.strftime('%a, %b %d')}} | Duration: {{quiz.time}} minutes</p>
-            <a href="{{url_for('instructions', quiz_id=quiz.id)}}">Attempt</a>
+            Due Date: {{quiz.doa.strftime('%a, %b %d, %H:%M')}} | Duration: {{quiz.time}} minutes</p>
+            {% if due < quiz.doa %}
+            <a href="{{url_for('instructions', quiz_id=quiz.id)}}">Attempt</a> (Max. Attempts: 3)
+            {% elif due > quiz.doa %}
+            <p>Due date completed.</p>
+            {% endif %}
             {% endfor %}       
         {% endif %}
 

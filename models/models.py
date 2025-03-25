@@ -59,7 +59,7 @@ class Quizzes(db.Model): #default __tablename__ = "quizzes"
     subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), index=True)
     chapter_id = db.Column(db.Integer, db.ForeignKey('chapters.id'), index=True)
     title = db.Column(db.String(64), nullable=False)
-    doa = db.Column(db.Date)
+    doa = db.Column(db.DateTime)
     time = db.Column(db.Integer, nullable=False)
     remarks = db.Column(db.String(250), nullable=True)
 

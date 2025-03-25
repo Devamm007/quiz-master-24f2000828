@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import time
 from functools import wraps
 from flask_login import LoginManager, UserMixin, login_required, current_user, logout_user, login_user
@@ -61,8 +61,8 @@ def update(object, edit):
         for key, value in edit:
                 if hasattr(object, key):
                     attr_type = type(getattr(object, key))
-                    if attr_type == date:
-                        setattr(object, key, datetime.strptime(value, "%Y-%m-%d").date())
+                    if attr_type == datetime:
+                        setattr(object, key, datetime.strptime(value, "%Y-%m-%dT%H:%M"))
                         continue
                     setattr(object, key, preprocess_value(value))
         db.session.commit()
@@ -106,25 +106,23 @@ def registration():
         username = request.form.get("username").strip()
         email = request.form.get("email").strip()
         dob = datetime.strptime(request.form.get("dob"), '%Y-%m-%d').date()
+        eightyearsago = datetime.now().date() - timedelta(days=8 * 365)
+        if dob > eightyearsago:
+            flash("Student must be 8 years old.", "error")
+            return redirect(url_for("registration"))
         password = request.form.get("password")
         cf_password = request.form.get("cf_password")
-
         if password != cf_password:
             flash("Re-entered password does not match, please enter your password again.", "error")
             return redirect(url_for("registration"))
-        
         username_check = Registrations.query.filter_by(username=username).first()
-
         if username_check:
             flash("Username already exists, create another.", "error")
             return redirect(url_for("registration"))
-
         email_check = Registrations.query.filter_by(email=email).first()
-
         if email_check:
             flash("Email already registered. Please use a different email.", "error")
             return redirect(url_for("registration"))
-
         new_user = Registrations(fullname=request.form.get("fullname").strip().lower(), username=username,
                                  email=email, dob=dob, password=password,
                                  pursuing=request.form.get("pursuing")) # passhash=password_hash, pursuing=pursuing)
@@ -153,9 +151,10 @@ def delete_account():
 @login_required
 def home():
     user = Registrations.query.get(current_user.id)
+    due = datetime.now()
     if user.is_admin:
         return redirect(url_for("admin", user=user))
-    return render_template("home.html", user=user, quizzes=Quizzes.query.all(), 
+    return render_template("home.html", user=user, due=due, quizzes=Quizzes.query.all(), 
                            chapters=Chapters.query.all(), subjects=Subjects.query.all())
 
 @app.route("/profile", methods=["GET", "POST"])
@@ -188,7 +187,7 @@ def profile():
         user.password = password
         db.session.commit()
         flash("Password updated!", "success")
-        redirect(url_for("profile"))
+        return redirect(url_for("profile"))
 
 @app.route("/admin")
 @admin_auth
@@ -212,6 +211,13 @@ def instructions(quiz_id):
     user=Registrations.query.get(current_user.id)
     noq = len(Questions.query.filter_by(quiz_id=quiz_id).all())
     quiz = Quizzes.query.get(quiz_id)
+    due = datetime.now()
+    if due > quiz.doa:
+        flash("Due date completed.", "error")
+        return redirect(url_for("home"))
+    if not quiz:
+        flash("Quiz does not exist", "error")
+        return redirect(url_for("home"))
     chapter = Chapters.query.get(quiz.chapter_id)
     last_attempt = db.session.query(func.max(Scores.attempt_number), Scores.quiz_id == quiz_id).filter_by(user_id=current_user.id, quiz_id=quiz_id).scalar()
     return render_template("instructions.html", noq=noq, chapter=chapter.chapter, quiz=quiz, user=user, last_attempt=last_attempt)
@@ -223,6 +229,10 @@ def attempt_quiz(quiz_id):
         session['timer_start'] = time.time()
     user=Registrations.query.get(current_user.id)
     quiz=Quizzes.query.get(quiz_id)
+    due = datetime.now()
+    if due > quiz.doa:
+        flash("Due date completed.", "error")
+        return redirect(url_for("home"))
     questions = Questions.query.filter_by(quiz_id=quiz_id).all()
     last_attempt = db.session.query(func.max(Scores.attempt_number), Scores.quiz_id == quiz_id).filter_by(user_id=current_user.id, quiz_id=quiz_id).scalar()
     if last_attempt == 3:
@@ -251,7 +261,7 @@ def submit_quiz(quiz_id):
     db.session.add(new_score)
     db.session.commit()
     user = Registrations.query.get(current_user.id)
-    data = Scores.query.join(Quizzes, and_(Quizzes.id == quiz_id, Scores.quiz_id == quiz_id)).join(
+    data = Scores.query.join(Quizzes, and_(Quizzes.id == quiz_id, Scores.quiz_id == quiz_id, Scores.user_id == user.id)).join(
         Subjects, Subjects.id == Quizzes.subject_id
         ).join(Chapters, Chapters.id == Quizzes.chapter_id).filter(and_(Scores.attempt_number == attempt_number, Quizzes.id == quiz_id)).all()
     return render_template("score.html", user=user, data=data)
@@ -261,7 +271,7 @@ def submit_quiz(quiz_id):
 @login_required
 def scores():
     user = Registrations.query.get(current_user.id)
-    data = Scores.query.join(Quizzes, Quizzes.id == Scores.quiz_id).join(
+    data = Scores.query.join(Quizzes, and_(Quizzes.id == Scores.quiz_id, Scores.user_id == user.id)).join(
         Subjects, Subjects.id == Quizzes.subject_id
         ).join(Chapters, Chapters.id == Quizzes.chapter_id).all()
     return render_template("score.html", user=user, data=data)
@@ -304,13 +314,14 @@ def user_search():
     if request.method == "GET":
         return render_template("user_search.html", user=user)
     if request.method == "POST":
+        due = datetime.now()
         search = request.form.get('search')
         data2 = Subjects.query.filter(or_(Subjects.subject.ilike(f'%{search}%'),
                                           Subjects.subject_des.ilike(f'%{search}%'))).all()
         data3 = Chapters.query.filter(or_(Chapters.chapter.ilike(f'%{search}%'),
                                           Chapters.chapter_des.ilike(f'%{search}%'))).all()
         data4 = Quizzes.query.filter(Quizzes.title.ilike(f'%{search}%')).all()
-        return render_template("user_search.html", user=user, data2=data2, data3=data3, data4=data4, search=search)
+        return render_template("user_search.html", user=user, due=due, data2=data2, data3=data3, data4=data4, search=search)
 
 @app.route("/admin/search", methods=["GET", "POST"])
 @admin_auth
@@ -331,6 +342,8 @@ def admin_search():
         data4 = Quizzes.query.join(Questions, Quizzes.id == Questions.quiz_id).filter(or_(Quizzes.title.ilike(f'%{search}%'),
                                                          Questions.title.ilike(f'%{search}%'),
                                                          Questions.question.ilike(f'%{search}%'))).all()
+        if not data4:
+            data4 = Quizzes.query.filter(Quizzes.title.ilike(f'%{search}%')).all()
         return render_template("admin_search.html", user=user, data1=data1, data2=data2, data3=data3, data4=data4, search=search)
 
 #SUBJECT
@@ -419,6 +432,9 @@ def quizzes():
 def view_quiz(id):
     user=Registrations.query.get(current_user.id)
     quiz = Quizzes.query.get(id)
+    if not quiz:
+        flash("Quiz does not exist.", "error")
+        return redirect(url_for("home"))
     chapter = Chapters.query.get(quiz.chapter_id)
     subject = Subjects.query.get(chapter.subject_id)
     questions = Questions.query.filter_by(quiz_id=quiz.id)
@@ -429,7 +445,7 @@ def view_quiz(id):
 def add_quiz():
     chap_id = request.form.get("chap_id").strip()
     title = request.form.get("title").strip().lower()
-    doa = datetime.strptime(request.form.get("doa"), '%Y-%m-%d').date()
+    doa = datetime.strptime(request.form.get("doa"), '%Y-%m-%dT%H:%M')
     time = request.form.get("time")
     remarks = request.form.get("remarks")
 

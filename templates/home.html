@@ -17,8 +17,12 @@
                     {% if quiz.subject_id == subject.id %}
                         {% set chapter = chapters|selectattr('id', 'equalto', quiz.chapter_id) %}
                         <p title="{{chapter.chapter}} | {{chapter.chapter_des}}">{{quiz.title}} | 
-                            Due Date: {{quiz.doa.strftime('%a, %b %d')}} | Duration: {{quiz.time}} minutes</p>
+                            Due Date: {{quiz.doa.strftime('%a, %b %d, %H:%M')}} | Duration: {{quiz.time}} minutes</p>
+                        {% if due < quiz.doa %}
                         <a href="{{url_for('instructions', quiz_id=quiz.id)}}">Attempt</a> (Max. Attempts: 3)
+                        {% elif due > quiz.doa %}
+                        <p>Due date completed.</p>
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
             {% endif %}

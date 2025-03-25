@@ -125,7 +125,7 @@
                     <p>Update Quiz</p>
                     <form action="{{url_for('edit_quiz', id=quiz.id, quiz=quiz)}}" method="post">
                         <div><label>Title: <input name="title" type="text" value="{{quiz.title}}"></label></div>
-                        <div><label>Attempt date (DOA): <input name="doa" type="date" value="{{quiz.doa}}"></label></div>
+                        <div><label>Due Date: <input name="doa" type="datetime-local" value="{{quiz.doa}}"></label></div>
                         <div><label>Duration (in minutes): <input name="time" type="number" value="{{quiz.time}}"></label></div>
                         <div><label>Remarks: <input name="remarks" type="text" value="{{quiz.remarks}}"></label></div>
                         <input type="submit" value="Update">
@@ -148,7 +148,7 @@
         <form action="{{url_for('add_quiz')}}" method="post">
             <div><label>Chapter ID: <input name="chap_id" type="number" placeholder="Enter chapter ID" required></label></div>
             <div><label>Title: <input name="title" type="text" placeholder="quiz's title" required></label></div>
-            <div><label>Attempt date (DOA): <input name="doa" type="date" required></label></div>
+            <div><label>Due Date: <input name="doa" type="datetime-local" required></label></div>
             <div><label>Duration (in minutes): <input name="time" type="number" required></label></div>
             <div><label>Remarks: <input name="remarks" type="text" placeholder="Enter any remark for students"></label></div>
             <input type="submit" value="Submit">
