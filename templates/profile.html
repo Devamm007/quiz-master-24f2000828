@@ -6,14 +6,18 @@
     
 {% endblock %}
 {% block content %}
+    <h3>Change your Password</h3>
     <form method="post">
-        <div><label>Username: <input type="text" name="username" value="{{user.username}}" placeholder="Enter your username (new/current)" required></label></div>
-        <div><label>Current password: <input type="password" name="curr_password" id="curr_password" placeholder="Enter your password" required></label></div>
-        <div><label>New password: <input type="password" name="password" id="password" placeholder="Enter your new password" required></label></div>
-        <input type="submit" value="Update">
+        <div><label class="form-label">Username: <input class="form-control" type="text" name="username" value="{{user.username}}" placeholder="Enter your username (new/current)" required></label></div>
+        <div><label class="form-label">Current password: <input class="form-control" type="password" name="curr_password" id="curr_password" placeholder="Enter your password" required></label></div>
+        <div><label class="form-label">New password: <input class="form-control" type="password" name="password" id="password" placeholder="Enter your new password" required></label></div>
+        <div><label class="form-label">Confirm new password: <input class="form-control" type="password" name="cf_password" id="password" placeholder="Re-enter new password" required></label></div>
+        <input class="btn btn-success" type="submit" value="Update">
     </form>
+    <hr>
+    <h3>Delete your account</h3>
     <form action="{{ url_for('delete_account') }}" method="post" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
-        <button type="submit" class="btn btn-danger">Delete my account</button>
+        <button type="submit" class="btn btn-danger">Delete</button>
     </form>    
 {% endblock %}
 {% block script %}

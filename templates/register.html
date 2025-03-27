@@ -2,31 +2,55 @@
 {% block title %}
 QuizVerse - Register
 {% endblock %}
-{% block style %}
-    
-{% endblock %}
+
 {% block content %}
-<h1>Register</h1>
-<div class="form_box">
-    <form method="post">
-        <div><label>Fullname: <input type="text" placeholder="Enter your name" name="fullname" required></label></div>
-        <div><label>Username: <input type="text" placeholder="Enter your username" name="username" id="username" required></label></div>
-        <div><label>Email: <input type="email" placeholder="Enter your email" name="email" id="email" required></label></div>
-        <div><label>DOB: <input type="date" name="dob" id="dob" required></label></div>
-        <div><label>Password: <input type="password" placeholder="Enter your password" name="password" id="password" required></label></div>
-        <div><label>Confirm Password: <input type="password" placeholder="Re-enter your password" name="cf_password" id="password" required></label></div>
-        <div>
-            <label>Pursuing:
-                <select id="dropdown" name="pursuing">
-                    <option value="">(select one)</option>
-                    <option value="secondary">Secondary</option>
-                    <option value="higher_secondary">Higher Secondary</option>
-                    <option value="bachelors">Bachelor's Degree</option>
-                    <option value="other">Others</option>
-                </select>
-            </label>
+<h1 class="mb-4">Register</h1>
+<form method="post">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label for="fullname" class="form-label">Fullname</label>
+            <input type="text" class="form-control" id="fullname" placeholder="Enter your name" name="fullname" required>
         </div>
-        <input type="submit" value="Submit">
-    </form>
-</div>
+        
+        <div class="col-md-6">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" placeholder="Enter your username" name="username" required>
+        </div>
+        
+        <div class="col-md-6">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" placeholder="Enter your email" name="email" required>
+        </div>
+        
+        <div class="col-md-6">
+            <label for="dob" class="form-label">Date of Birth</label>
+            <input type="date" class="form-control" id="dob" name="dob" required>
+        </div>
+        
+        <div class="col-md-6">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" placeholder="Enter your password" name="password" required>
+        </div>
+        
+        <div class="col-md-6">
+            <label for="cf_password" class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" id="password" placeholder="Re-enter your password" name="cf_password" required>
+        </div>
+        
+        <div class="col-md-6">
+            <label for="pursuing" class="form-label">Pursuing</label>
+            <select id="dropdown" name="pursuing" class="form-select" required>
+                <option value="" selected disabled>(select one)</option>
+                <option value="secondary">Secondary</option>
+                <option value="higher_secondary">Higher Secondary</option>
+                <option value="bachelors">Bachelor's Degree</option>
+                <option value="other">Others</option>
+            </select>
+        </div>
+        
+        <div class="col-12 mt-3">
+            <button type="submit" class="btn btn-primary">Register</button>
+        </div>
+    </div>
+</form>
 {% endblock %}

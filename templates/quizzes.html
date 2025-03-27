@@ -3,70 +3,67 @@
     Quizzes
 {% endblock %}
 {% block style %}
-        <style>
-            .container {
-                display: flex;
-                flex-wrap: wrap;
-            }
-            .row {
-                display: flex;
-                width: 50%;
-                margin: 5px;
-            }
-            .col {
-                flex: 1;
-                padding: 10px;
-                border: 1px solid #ccc;
-                margin: 5px;
-            }        
-        </style>
-    {% endblock %}
+<style>
+    .custom-shadow {
+        box-shadow: 0px 0px 2000px rgba(0, 0, 0, 1); /* Large, soft shadow */
+    }
+</style>
+{% endblock %}
 {% block content %}
-    <div class="container">
+    <div class="mb-2 container-flex justify-content-center">
+        <div class="row g-2">
         {% for quiz in quizzes %}
-            {% if loop.index0 % 2 == 0 %}
-            <div class="row">
-            {% endif %}
-            <div class="col">
+        <div class="col-6">
+            <div class="p-2 border border-secondary">
                 <p title="{{quiz.remarks}}">{{quiz.title}}</p>
-                <table border="2">
-                    <tr>
-                        <th>ID</th>
-                        <th>Question's Title</th>
-                        <th>Action</th>
-                    </tr>
+                <table class="table table-bordered table-hover text-center align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Question's Title</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
                     {% for question in questions %}
                         {% if quiz.id == question.quiz_id %}
                             <tr>
                                 <td>{{question.id}}</td>
                                 <td title="{{question.question}}">{{question.title}}</td>
                                 <td>
-                                    <button popovertarget="editq{{question.id}}">Edit</button>
-                                    <form action="{{url_for('del_model', model='question', id=question.id)}}" method="post" onsubmit="return confirm('Are you sure you want to delete this question? This action cannot be undone.');">
-                                        <input type="submit" value="Delete">
-                                    </form>
+                                    <div class="btn-group" role="group" aria-label class="form-label"="Basic mixed styles example">
+                                        <button class="btn btn-success btn-sm" popovertarget="editq{{question.id}}">Edit</button>
+                                        <button class="btn btn-danger btn-sm" popovertarget="delq{{question.id}}">Delete</button>
+                                    </div>
                                 </td>
                             </tr>
 
-                            <div id="editq{{question.id}}" popover>
-                                <button popovertarget="editq{{question.id}}" popovertargetaction="hide">X</button>
+                            <div class="p-2 bg-white rounded-4 custom-shadow" id="delq{{question.id}}" popover>
+                                <button class="btn btn-close btn-sm " popovertarget="delq{{question.id}}" popovertargetaction="hide"></button>
+                                <p>Are you sure you want to delete this question? <br> This action cannot be undone.</p>
+                                <form action="{{url_for('del_model', model='question', id=question.id)}}" method="post">
+                                    <input class="btn btn-danger" type="submit" value="Delete">
+                                </form>
+                            </div>
+
+                            <div class="p-2 bg-white rounded-4 custom-shadow" id="editq{{question.id}}" popover>
+                                <button class="btn btn-close btn-sm " popovertarget="editq{{question.id}}" popovertargetaction="hide"></button>
                                 <p>Update Question</p>
                                 <form action="{{url_for('edit_question', id=question.id)}}" method="post">
                                     <div>
-                                        <label>Question type:
+                                        <label class="form-label">Question type:
                                             <select id="question_type" name="question_type">
                                                 <option value = "single_correct" {% if single_correct|string == question.question_type %}selected{% endif %}>Single correct MCQ</option>
                                             </select>
                                         </label>
                                     </div>
-                                    <div><label>Question: <input name="question" type="text" value="{{question.question}}"></label></div>
-                                    <div><label>Question Title: <input name="title" type="text" value="{{question.title}}"></label></div>
-                                    <div><label>Option a: <input name="option1" type="text" value="{{question.option1}}"></label></div>
-                                    <div><label>Option b: <input name="option2" type="text" value="{{question.option2}}"></label></div>
-                                    <div><label>Option c: <input name="option3" type="text" value="{{question.option3}}"></label></div>
-                                    <div><label>Option d: <input name="option4" type="text" value="{{question.option4}}"></label></div>
+                                    <div class="input-group"><label class="form-label">Question: <input class="form-control" name="question" type="text" value="{{question.question}}"></label></div>
+                                    <div><label class="form-label">Question Title: <input class="form-control" name="title" type="text" value="{{question.title}}"></label></div>
+                                    <div><label class="form-label">Option a: <input class="form-control" name="option1" type="text" value="{{question.option1}}"></label></div>
+                                    <div><label class="form-label">Option b: <input class="form-control" name="option2" type="text" value="{{question.option2}}"></label></div>
+                                    <div><label class="form-label">Option c: <input class="form-control" name="option3" type="text" value="{{question.option3}}"></label></div>
+                                    <div><label class="form-label">Option d: <input class="form-control" name="option4" type="text" value="{{question.option4}}"></label></div>
                                     <div>
-                                        <label>Answer: 
+                                        <label class="form-label">Answer: 
                                             <select id="answer" name="answer">
                                                 <option value=1 {% if 1|string == question.answer %}selected{% endif %}>option a</option>
                                                 <option value=2 {% if 2|string == question.answer %}selected{% endif %}>option b</option>
@@ -75,34 +72,54 @@
                                             </select>
                                         </label>
                                     </div>
-                                    <div><label>Weightage: <input name="weightage" min="1" step="1" max="10" type="number" value="{{question.weightage}}"></label></div>
-                                    <input type="submit" value="Update">
+                                    <div><label class="form-label">Weightage: <input class="form-control" name="weightage" min="1" step="1" max="10" type="number" value="{{question.weightage}}"></label></div>
+                                    <input class="btn btn-success" type="submit" value="Update">
                                 </form>
                             </div>
                         {% endif %}
                     {% endfor %}
                 </table>
 
-                <button popovertarget="addq{{quiz.id}}">Add Question</button>
-                <div id="addq{{quiz.id}}" popover>
-                    <button popovertarget="addq{{quiz.id}}" popovertargetaction="hide">X</button>
+                <div class="btn-toolbar" role="toolbar" aria-label class="form-label"="Toolbar with button groups">
+                    <div class="btn-group me-2" role="group" aria-label class="form-label"="Question actions">
+                        <button class="btn btn-success btn-sm" popovertarget="addq{{quiz.id}}">Add Question</button>
+                    </div>
+                    <div class="btn-group" role="group" aria-label class="form-label"="Quiz actions">
+                        <form style="display: inline;" action="{{url_for('view_quiz', id=quiz.id)}}" method="get">
+                            <button class="btn btn-info btn-sm" type="submit" title="chapter_id={{quiz.chapter_id}}">View Quiz</button>
+                        </form>
+                        <button class="btn btn-success btn-sm" popovertarget="editquiz{{quiz.id}}">Edit Quiz</button>
+                        <button class="btn btn-danger btn-sm" popovertarget="del_quiz_{{quiz.id}}">Delete Quiz</button>
+                    </div>
+                </div>
+
+                <div class="p-2 bg-white rounded-4 custom-shadow" id="del_quiz_{{quiz.id}}" popover>
+                    <button class="btn btn-close btn-sm " popovertarget="del_quiz_{{quiz.id}}" popovertargetaction="hide"></button>
+                    <p>Are you sure you want to delete this quiz? <br> This action cannot be undone.</p>
+                    <form action="{{url_for('del_model', model='quiz', id=quiz.id)}}" method="post">
+                        <input class="btn btn-danger" type="submit" value="Delete Quiz">
+                    </form>
+                </div>
+
+                <div class="p-2 bg-white rounded-4 custom-shadow" id="addq{{quiz.id}}" popover>
+                    <button class="btn btn-close btn-sm " popovertarget="addq{{quiz.id}}" popovertargetaction="hide"></button>
                     <p>New Question</p>
                     <form action="{{url_for('add_question', id=quiz.id)}}" method="post">
                         <div>
-                            <label>Question type:
+                            <label class="form-label">Question type:
                                 <select id="question_type" name="question_type">
                                     <option value = "single_correct">Single correct MCQ</option>
                                 </select>
                             </label>
                         </div>
-                        <div><label>Question: <input name="question" type="text" required></label></div>
-                        <div><label>Question Title: <input name="title" type="text" required></label></div>
-                        <div><label>Option a: <input name="option1" type="text" required></label></div>
-                        <div><label>Option b: <input name="option2" type="text" required></label></div>
-                        <div><label>Option c: <input name="option3" type="text" required></label></div>
-                        <div><label>Option d: <input name="option4" type="text" required></label></div>
+                        <div><label class="form-label">Question: <input class="form-control" name="question" type="text" required></label></div>
+                        <div><label class="form-label">Question Title: <input class="form-control" name="title" type="text" required></label></div>
+                        <div><label class="form-label">Option a: <input class="form-control" name="option1" type="text" required></label></div>
+                        <div><label class="form-label">Option b: <input class="form-control" name="option2" type="text" required></label></div>
+                        <div><label class="form-label">Option c: <input class="form-control" name="option3" type="text" required></label></div>
+                        <div><label class="form-label">Option d: <input class="form-control" name="option4" type="text" required></label></div>
                         <div>
-                            <label>Answer: 
+                            <label class="form-label">Answer: 
                                 <select id="answer" name="answer">
                                     <option value=1>option a</option>
                                     <option value=2>option b</option>
@@ -111,47 +128,41 @@
                                 </select>
                             </label>
                         </div>
-                        <div><label>Weightage: <input name="weightage" type="number" required></label></div>
-                        <input type="submit" value="Submit">
+                        <div><label class="form-label">Weightage: <input class="form-control" name="weightage" type="number" required></label></div>
+                        <input class="btn btn-success" type="submit" value="Submit">
                     </form>
                 </div>
-                <br>
-                <form style="display: inline;" action="{{url_for('view_quiz', id=quiz.id)}}" method="get">
-                    <button type="submit" title="chapter_id={{quiz.chapter_id}}">View Quiz</button>
-                </form>
-                <button popovertarget="editquiz{{quiz.id}}">Edit Quiz</button>
-                <div id="editquiz{{quiz.id}}" popover>
-                    <button popovertarget="editquiz{{quiz.id}}" popovertargetaction="hide">X</button>
+                
+                <div class="p-2 bg-white rounded-4 custom-shadow" id="editquiz{{quiz.id}}" popover>
+                    <button class="btn btn-close btn-sm " popovertarget="editquiz{{quiz.id}}" popovertargetaction="hide"></button>
                     <p>Update Quiz</p>
                     <form action="{{url_for('edit_quiz', id=quiz.id, quiz=quiz)}}" method="post">
-                        <div><label>Title: <input name="title" type="text" value="{{quiz.title}}"></label></div>
-                        <div><label>Due Date: <input name="doa" type="datetime-local" value="{{quiz.doa}}"></label></div>
-                        <div><label>Duration (in minutes): <input name="time" type="number" value="{{quiz.time}}"></label></div>
-                        <div><label>Remarks: <input name="remarks" type="text" value="{{quiz.remarks}}"></label></div>
-                        <input type="submit" value="Update">
+                        <div><label class="form-label">Title: <input class="form-control" name="title" type="text" value="{{quiz.title}}"></label></div>
+                        <div><label class="form-label">Due Date: <input class="form-control" name="doa" type="datetime-local" value="{{quiz.doa}}"></label></div>
+                        <div><label class="form-label">Duration (in minutes): <input class="form-control" name="time" type="number" value="{{quiz.time}}"></label></div>
+                        <div><label class="form-label">Remarks: <input class="form-control" name="remarks" type="text" value="{{quiz.remarks}}"></label></div>
+                        <input class="btn btn-success" type="submit" value="Update">
                     </form>
                 </div>
-                <form action="{{url_for('del_model', model='quiz', id=quiz.id)}}" method="post" onsubmit="return confirm('Are you sure you want to delete this quiz? This action cannot be undone.');">
-                    <input type="submit" value="Delete Quiz">
-                </form>
             </div>
-            {% if loop.index0 % 2 == 1 or loop.last %}
-                </div>
-            {% endif %}
+        </div>
         {% endfor %}
+        </div>
+        
     </div>
-
-    <button popovertarget="addquiz">Add Quiz</button>
-    <div id="addquiz" popover>
-        <button popovertarget="addquiz" popovertargetaction="hide">X</button>
+    <div class="text-center">
+        <button class="btn btn-primary btn-lg " popovertarget="addquiz">Add Quiz</button>
+    </div>
+    <div class="p-2 bg-white rounded-4 custom-shadow" id="addquiz" popover>
+        <button class="btn btn-close btn-sm " popovertarget="addquiz" popovertargetaction="hide"></button>
         <p>New Quiz</p>
         <form action="{{url_for('add_quiz')}}" method="post">
-            <div><label>Chapter ID: <input name="chap_id" type="number" placeholder="Enter chapter ID" required></label></div>
-            <div><label>Title: <input name="title" type="text" placeholder="quiz's title" required></label></div>
-            <div><label>Due Date: <input name="doa" type="datetime-local" required></label></div>
-            <div><label>Duration (in minutes): <input name="time" type="number" required></label></div>
-            <div><label>Remarks: <input name="remarks" type="text" placeholder="Enter any remark for students"></label></div>
-            <input type="submit" value="Submit">
+            <div><label class="form-label">Chapter ID: <input class="form-control" name="chap_id" type="number" placeholder="Enter chapter ID" required></label></div>
+            <div><label class="form-label">Title: <input class="form-control" name="title" type="text" placeholder="quiz's title" required></label></div>
+            <div><label class="form-label">Due Date: <input class="form-control" name="doa" type="datetime-local" required></label></div>
+            <div><label class="form-label">Duration (in minutes): <input class="form-control" name="time" type="number" required></label></div>
+            <div><label class="form-label">Remarks: <input class="form-control" name="remarks" type="text" placeholder="Enter any remark for students"></label></div>
+            <input class="btn btn-success" type="submit" value="Submit">
         </form>
     </div>    
 {% endblock %}

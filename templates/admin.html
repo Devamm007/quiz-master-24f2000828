@@ -3,107 +3,113 @@
     Admin Dashboard
 {% endblock %}
 {% block style %}
-    <style>
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-        }
-        .row {
-            display: flex;
-            width: 50%;
-            margin: 5px;
-        }
-        .col {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            margin: 5px;
-        }        
-    </style>
+<style>
+    .custom-shadow {
+        box-shadow: 0px 0px 2000px rgba(0, 0, 0, 1); /* Large, soft shadow */
+    }
+</style>
 {% endblock %}
 {% block content %}
-    <div class="container">
+    <div class="mb-2 container-flex justify-content-center">
+        <div class="row g-2">
         {% for subject in subjects %}
-            {% if loop.index % 2 == 1 %}
-            <div class="row">
-            {% endif %}
-            <div class="col">
-                <p title="{{subject.subject_des}}">{{subject.subject}}</p>
-                <table border="2">
-                    <tr>
-                        <th>ID</th>
-                        <th>Chapter Name</th>
-                        <th>Actions</th>
-                    </tr>
-                    {% for chapter in chapters %}
-                        {% if subject.id == chapter.subject_id %}
+            <div class="col-6">
+                <div class="p-2 border border-secondary">
+                    <p title="{{subject.subject_des}}">{{subject.subject}}</p>
+                    <table class="table table-bordered table-hover text-center align-middle">
+                        <thead class="table-dark">
                             <tr>
-                                <td>{{chapter.id}}</td>
-                                <td title="{{chapter.chapter_des}}">{{chapter.chapter}}</td>
-                                <td>
-                                    <div style="display:inline-block">
-                                        <button popovertarget="edit_chap_{{chapter.id}}">Edit</button>
-                                        <form action="{{url_for('del_model', model='chapter', id=chapter.id)}}" method="post" onsubmit="return confirm('Are you sure you want to delete this chapter? This action cannot be undone.');">
-                                            <input type="submit" value="Delete">
-                                        </form>
-                                    </div>
-                                </td>
+                                <th>ID</th>
+                                <th>Chapter Name</th>
+                                <th>Actions</th>
                             </tr>
+                        </thead>
+                        {% for chapter in chapters %}
+                            {% if subject.id == chapter.subject_id %}
+                                <tr>
+                                    <td>{{chapter.id}}</td>
+                                    <td title="{{chapter.chapter_des}}">{{chapter.chapter}}</td>
+                                    <td>
+                                        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                            <button class="btn btn-success btn-sm " popovertarget="edit_chap_{{chapter.id}}">Edit</button>
+                                            <button class="btn btn-danger btn-sm " popovertarget="del_chap_{{chapter.id}}">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
 
-                            <div id="edit_chap_{{chapter.id}}" popover>
-                                <button popovertarget="edit_chap_{{chapter.id}}" popovertargetaction="hide">X</button>
-                                <p>Update Chapter</p>
-                                <form action="{{url_for('edit_chapter', id=chapter.id)}}" method="post">
-                                    <div><label>Name: <input type="text" name="chapter" value="{{chapter.chapter}}"></label></div>
-                                    <div><label>Description: <input type="text" name="chapter_des" value="{{chapter.chapter_des}}"></label></div>
-                                    <input type="submit" value="Update">
-                                </form>
-                            </div>
+                                <div class="p-2 bg-white rounded-4 custom-shadow" id="del_chap_{{chapter.id}}" popover>
+                                    <button class="btn btn-close btn-sm " popovertarget="del_chap_{{chapter.id}}" popovertargetaction="hide"></button>
+                                    <p>Are you sure you want to delete this chapter? <br> This action cannot be undone.</p>
+                                    <form action="{{url_for('del_model', model='chapter', id=chapter.id)}}" method="post">
+                                        <input class="btn btn-danger btn-sm " type="submit" value="Delete">
+                                    </form>
+                                </div>
 
-                        {% endif %}
-                    {% endfor %}
-                </table>
+                                <div class="p-2 bg-white rounded-4 custom-shadow" id="edit_chap_{{chapter.id}}" popover>
+                                    <button class="btn btn-close btn-sm " popovertarget="edit_chap_{{chapter.id}}" popovertargetaction="hide"></button>
+                                    <p>Update Chapter</p>
+                                    <form action="{{url_for('edit_chapter', id=chapter.id)}}" method="post">
+                                        <div><label class="form-label">Name: <input class="form-control" type="text" name="chapter" value="{{chapter.chapter}}"></label></div>
+                                        <div><label class="form-label">Description: <textarea class="form-control" type="text" name="chapter_des">{{chapter.chapter_des}}</textarea></label></div>
+                                        <input class="btn btn-success" type="submit" value="Update">
+                                    </form>
+                                </div>
 
-                <button popovertarget="chapter_add_{{subject.id}}">Add Chapter</button>
-                <div id="chapter_add_{{subject.id}}" popover>
-                    <button popovertarget="chapter_add_{{subject.id}}" popovertargetaction="hide">X</button>
-                    <p>New Chapter</p>
-                    <form action="{{url_for('add_chapter', id=subject.id)}}" method="post">
-                        <div><label>Name: <input type="text" name="chapter" placeholder="Enter chapter name"></label></div>
-                        <div><label>Description: <input type="text" name="chapter_des" placeholder="Enter chapter description"></label></div>
-                        <input type="submit" value="Submit">
-                    </form>
-                </div>
-                <br>
-                <button popovertarget="edit_sub_{{subject.id}}">Edit Subject</button>
-                <div id="edit_sub_{{subject.id}}" popover>
-                    <button popovertarget="edit_sub_{{subject.id}}" popovertargetaction="hide">X</button>
-                    <p>Update Subject</p>
-                    <form action="{{url_for('edit_subject', id=subject.id)}}" method="post">
-                        <div><label>Name: <input type="text" name="subject" value="{{subject.subject}}"></label></div>
-                        <div><label>Description: <input type="text" name="subject_des" value="{{subject.subject_des}}"></label></div>
-                        <input type="submit" value="Update">
-                    </form>
-                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+
+                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                        <div class="btn-group me-2" role="group" aria-label="Basic mixed styles example">
+                            <button class="btn btn-success" popovertarget="chapter_add_{{subject.id}}">Add Chapter</button>
+                        </div>
+                        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                            <button class="btn btn-success" popovertarget="edit_sub_{{subject.id}}">Edit Subject</button>
+                            <button class="btn btn-danger" popovertarget="del_sub_{{subject.id}}">Delete Subject</button>
+                        </div>
+                    </div>
                 
-                <form action="{{url_for('del_model', model='subject', id=subject.id)}}" method="post" onsubmit="return confirm('Are you sure you want to delete this subject? This action cannot be undone.');">
-                    <input type="submit" value="Delete Subject">
-                </form>
-            </div>
-            {% if loop.index % 2 == 0 or loop.last %}
-            </div>
-            {% endif %}
-        {% endfor %}
-    </div>
+                    <div class="p-2 bg-white rounded-4 custom-shadow" id="del_sub_{{subject.id}}" popover>
+                        <button class="btn btn-close btn-sm " popovertarget="del_sub_{{subject.id}}" popovertargetaction="hide"></button>
+                        <p>Are you sure you want to delete this subject? <br> This action cannot be undone.</p>
+                        <form action="{{url_for('del_model', model='subject', id=subject.id)}}" method="post">
+                            <input class="btn btn-danger btn-sm " type="submit" value="Delete">
+                        </form>
+                    </div>
 
-    <button popovertarget="add_sub">Add Subject</button>
-    <div id="add_sub" popover>
-        <button popovertarget="add_sub" popovertargetaction="hide">X</button>
+                    <div class="p-2 bg-white rounded-4 custom-shadow" id="chapter_add_{{subject.id}}" popover>
+                        <button class="btn btn-close btn-sm " popovertarget="chapter_add_{{subject.id}}" popovertargetaction="hide"></button>
+                        <p>New Chapter</p>
+                        <form action="{{url_for('add_chapter', id=subject.id)}}" method="post">
+                            <div><label class="form-label">Name: <input class="form-control" type="text" name="chapter" placeholder="Enter chapter name"></label></div>
+                            <div><label class="form-label">Description: <textarea class="form-control" type="text" name="chapter_des" placeholder="Enter chapter description"></textarea></label></div>
+                            <input class="btn btn-success" type="submit" value="Submit">
+                        </form>
+                    </div>
+                    <div class="p-2 bg-white rounded-4 custom-shadow" id="edit_sub_{{subject.id}}" popover>
+                        <button class="btn btn-close btn-sm " popovertarget="edit_sub_{{subject.id}}" popovertargetaction="hide"></button>
+                        <p>Update Subject</p>
+                        <form action="{{url_for('edit_subject', id=subject.id)}}" method="post">
+                            <div><label class="form-label">Name: <input class="form-control" type="text" name="subject" value="{{subject.subject}}"></label></div>
+                            <div><label class="form-label">Description: <textarea class="form-control" type="text" name="subject_des">{{subject.subject_des}}</textarea></label></div>
+                            <input class="btn btn-success" type="submit" value="Update">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="text-center">
+        <button class="btn btn-primary btn-lg " popovertarget="add_sub">Add Subject</button>
+    </div>
+    <div class="p-2 bg-white rounded-4 custom-shadow" id="add_sub" popover>
+        <button class="btn btn-close btn-sm " popovertarget="add_sub" popovertargetaction="hide"></button>
         <p>New Subject</p>
         <form action="{{url_for('add_subject')}}" method="post">
-            <div><label>Name: <input type="text" name="subject" placeholder="Enter subject name"></label></div>
-            <div><label>Description: <input type="text" name="subject_des" placeholder="Enter subject description"></label></div>
-            <input type="submit" value="Submit">
+            <div><label class="form-label">Name: <input class="form-control" type="text" name="subject" placeholder="Enter subject name"></label></div>
+            <div><label class="form-label">Description: <textarea class="form-control" type="text" name="subject_des" placeholder="Enter subject description"></textarea></label></div>
+            <input class="btn btn-success" type="submit" value="Submit">
         </form>
     </div>
 {% endblock %}

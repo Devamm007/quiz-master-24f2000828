@@ -7,20 +7,24 @@
 {% endblock %}
 {% block content %}
     <form method="post">
-        <div>
-            <div><label>Search: <input type="text" placeholder="search" name="search" value="{{search}}"></label></div>
+        <div class="input-group">
+            <label for="searchInput" class="input-group-text">Search</label>
+            <input type="text" class="form-control" id="searchInput" placeholder="search" name="search" value="{{search}}">
+            <input type="submit" class="btn btn-primary" value="Enter">
         </div>
-        <input type="submit" value="Enter">
     </form>
 
     {% if search %}
         {% if data2 %}
-        <table border="2"> <!-- style="border: 2px solid black;"> -->
-            <tr>
-                <th>Subject ID</th>
-                <th>Subject</th>
-                <th>Description</th>
-            </tr>
+        <hr>
+        <table class="table table-bordered table-hover text-center align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Subject ID</th>
+                    <th>Subject</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
             {% for subject in data2 %}
             <tr>
                 <td>{{subject.id}}</td>
@@ -28,16 +32,19 @@
                 <td>{{subject.subject_des}}</td>
             </tr>
             {% endfor %}
-        </table>        
+        </table>   
+        <hr>     
         {% endif %}
 
         {% if data3 %}
-        <table border="2"> <!-- style="border: 2px solid black;"> -->
-            <tr>
-                <th>Chapter ID</th>
-                <th>Chapter</th>
-                <th>Description</th>
-            </tr>
+        <table class="table table-bordered table-hover text-center align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Chapter ID</th>
+                    <th>Chapter</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
             {% for chapter in data3 %}
             <tr>
                 <td>{{chapter.id}}</td>
@@ -46,7 +53,8 @@
             </tr>
             
             {% endfor %}
-        </table>        
+        </table>    
+        <hr>    
         {% endif %}
 
         {% if data4 %}
@@ -54,11 +62,12 @@
             <h4>Quiz Title: {{ quiz.title }} | ID: {{quiz.id}}</h4>
             Due Date: {{quiz.doa.strftime('%a, %b %d, %H:%M')}} | Duration: {{quiz.time}} minutes</p>
             {% if due < quiz.doa %}
-            <a href="{{url_for('instructions', quiz_id=quiz.id)}}">Attempt</a> (Max. Attempts: 3)
+            <a class="btn btn-primary" href="{{url_for('instructions', quiz_id=quiz.id)}}">Attempt</a> (Maximum Attempts: 3)
             {% elif due > quiz.doa %}
             <p>Due date completed.</p>
             {% endif %}
-            {% endfor %}       
+            {% endfor %}  
+        <hr>     
         {% endif %}
 
     {% endif %}

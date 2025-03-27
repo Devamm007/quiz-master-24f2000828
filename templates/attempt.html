@@ -2,22 +2,61 @@
 {% block title %}
     Quiz-{{quiz.title}}
 {% endblock %}
-{% block style %}
-{% endblock %}
+
 {% block content %}
-    <div id="timer-display">Time Remaining: <span id="time-left">00:00</span></div>
-    <form action="{{url_for('submit_quiz', quiz_id=quiz.id)}}" method="post">
-        {% for question in questions %}
-            <p>{{question.question}} | Points: {{question.weightage}}</p>
-            <input type="radio" value="1" name="{{question.id}}">{{question.option1}}
-            <input type="radio" value="2" name="{{question.id}}">{{question.option2}}
-            <input type="radio" value="3" name="{{question.id}}">{{question.option3}}
-            <input type="radio" value="4" name="{{question.id}}">{{question.option4}}
-            <input type="radio" value=None name="{{question.id}}" checked>Clear selection
-        {% endfor %}
-        <input id="submit-btn" type="submit" value="Submit">
-    </form>
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">{{quiz.title}}</h4>
+            <div id="timer-display" class="badge bg-light text-dark p-2 fs-6">
+                Time Remaining: <span id="time-left" class="fw-bold">00:00</span>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            <form action="{{url_for('submit_quiz', quiz_id=quiz.id)}}" method="post" id="quiz-form">
+                {% for question in questions %}
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="fw-bold">Question {{loop.index}}</div>
+                            <div class="badge bg-secondary">Points: {{question.weightage}}</div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text mb-3">{{question.question}}</p>
+                            
+                            <div class="list-group">
+                                <label class="list-group-item d-flex align-items-center gap-2">
+                                    <input class="form-check-input" type="radio" value="1" name="{{question.id}}">
+                                    <span>{{question.option1}}</span>
+                                </label>
+                                <label class="list-group-item d-flex align-items-center gap-2">
+                                    <input class="form-check-input" type="radio" value="2" name="{{question.id}}">
+                                    <span>{{question.option2}}</span>
+                                </label>
+                                <label class="list-group-item d-flex align-items-center gap-2">
+                                    <input class="form-check-input" type="radio" value="3" name="{{question.id}}">
+                                    <span>{{question.option3}}</span>
+                                </label>
+                                <label class="list-group-item d-flex align-items-center gap-2">
+                                    <input class="form-check-input" type="radio" value="4" name="{{question.id}}">
+                                    <span>{{question.option4}}</span>
+                                </label>
+                                <label class="list-group-item d-flex align-items-center gap-2">
+                                    <input class="form-check-input" type="radio" value="None" name="{{question.id}}" checked>
+                                    <span class="text-muted fst-italic">Clear selection</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                
+                <div class="text-center mt-4">
+                    <input id="submit-btn" type="submit" value="Submit" class="btn btn-primary btn-lg px-5">
+                </div>
+            </form>
+        </div>
+    </div>
 {% endblock %}
+
 {% block script %}
 <script>
     // Set the time limit in seconds
@@ -46,14 +85,14 @@
         }, 1000);
     }
 
-    document.addEventListener("DOMContentLoaded", startTimer())
+    document.addEventListener("DOMContentLoaded", function() {
+        startTimer();
+    });
 
     // Prevent form from submitting normally
     document.getElementById("quiz-form").addEventListener("submit", function(event) {
-        event.preventDefault(); // Prevent default form submission
-        // Handle form submission logic here
-        console.log("Quiz submitted succesfully!");
+        clearInterval(timerInterval);
+        console.log("Quiz submitted successfully!");
     });
 </script>
 {% endblock %}
-

@@ -166,6 +166,11 @@ def profile():
         username = request.form.get("username").strip()
         curr_password = request.form.get("curr_password")
         password = request.form.get("password")
+        cf_password = request.form.get("cf_password")
+
+        if password != cf_password:
+            flash("Confirmed password does not match!")
+            return redirect(url_for("profile"))
 
         if not username or not curr_password or not password:
             flash("Please fill all the fields", "error")

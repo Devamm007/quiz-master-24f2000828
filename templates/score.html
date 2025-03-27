@@ -6,16 +6,18 @@
     
 {% endblock %}
 {% block content %}
-<table border="2px">
-    <tr>
-        <th>Quiz</th>
-        <th>Subject</th>
-        <th>Chapter</th>
-        <th>Score</th>
-        <th>Attempt Time</th>
-        <th>Attempt Number</th>
-        <th>Summary</th>
-    </tr>
+<table class="table table-bordered table-hover text-center align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Quiz</th>
+            <th>Subject</th>
+            <th>Chapter</th>
+            <th>Score</th>
+            <th>Attempt Time</th>
+            <th>Attempt Number</th>
+            <th>Summary</th>
+        </tr>
+    </thead>
     {% for d in data %}
     <tr>
         <td title="{{d.quiz_id}}">{{d.quiz.title}}</td>
@@ -25,9 +27,9 @@
         <td>{{d.start_time.strftime('%d-%m-%Y')}}</td>
         <td>{{d.attempt_number}}</td>
         {% if not user.is_admin %}
-        <td><a href="{{url_for('detail_score', quiz_id=d.quiz_id, attempt_number=d.attempt_number)}}">View</a></td>
+        <td><a class="btn btn-info" href="{{url_for('detail_score', quiz_id=d.quiz_id, attempt_number=d.attempt_number)}}">View</a></td>
         {% elif user.is_admin %}
-        <td><a href="{{url_for('detail_score_admin', user_id=user_stu.id, quiz_id=d.quiz_id, attempt_number=d.attempt_number)}}">View</a></td>
+        <td><a class="btn btn-info" href="{{url_for('detail_score_admin', user_id=user_stu.id, quiz_id=d.quiz_id, attempt_number=d.attempt_number)}}">View</a></td>
         {% endif %}
     </tr>
     {% endfor %}
