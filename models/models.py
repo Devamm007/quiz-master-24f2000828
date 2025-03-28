@@ -62,6 +62,7 @@ class Quizzes(db.Model): #default __tablename__ = "quizzes"
     doa = db.Column(db.DateTime)
     time = db.Column(db.Integer, nullable=False)
     remarks = db.Column(db.String(250), nullable=True)
+    is_hidden = db.Column(db.Boolean, nullable=False, default=True)
 
     questions = db.relationship('Questions', backref='quiz', lazy=True, cascade="all, delete-orphan")
     scores = db.relationship('Scores', backref='quiz', lazy=True, cascade="all, delete-orphan")

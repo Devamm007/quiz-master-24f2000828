@@ -59,12 +59,16 @@ def preprocess_value(value):
 def update(object, edit):
     try:
         for key, value in edit:
-                if hasattr(object, key):
-                    attr_type = type(getattr(object, key))
-                    if attr_type == datetime:
-                        setattr(object, key, datetime.strptime(value, "%Y-%m-%dT%H:%M"))
-                        continue
-                    setattr(object, key, preprocess_value(value))
+            if hasattr(object, key):
+                attr_type = type(getattr(object, key))
+                if attr_type == datetime:
+                    setattr(object, key, datetime.strptime(value, "%Y-%m-%dT%H:%M"))
+                    continue
+                setattr(object, key, preprocess_value(value))
+            if "is_hidden" not in edit:
+                setattr(object, "is_hidden", False)
+            else:
+                setattr(object, "is_hidden", True)
         db.session.commit()
     except Exception as e:
         db.session.rollback()
@@ -154,7 +158,7 @@ def home():
     due = datetime.now()
     if user.is_admin:
         return redirect(url_for("admin", user=user))
-    return render_template("home.html", user=user, due=due, quizzes=Quizzes.query.all(), 
+    return render_template("home.html", user=user, due=due, quizzes=Quizzes.query.filter_by(is_hidden=False).all(), 
                            chapters=Chapters.query.all(), subjects=Subjects.query.all())
 
 @app.route("/profile", methods=["GET", "POST"])
@@ -216,6 +220,9 @@ def instructions(quiz_id):
     user=Registrations.query.get(current_user.id)
     noq = len(Questions.query.filter_by(quiz_id=quiz_id).all())
     quiz = Quizzes.query.get(quiz_id)
+    if quiz.is_hidden:
+        flash("Quiz is in making!", "error")
+        return redirect(url_for("home"))
     due = datetime.now()
     if due > quiz.doa:
         flash("Due date completed.", "error")
@@ -234,6 +241,9 @@ def attempt_quiz(quiz_id):
         session['timer_start'] = time.time()
     user=Registrations.query.get(current_user.id)
     quiz=Quizzes.query.get(quiz_id)
+    if quiz.is_hidden:
+        flash("Quiz is in making!", "error")
+        return redirect(url_for("home"))
     due = datetime.now()
     if due > quiz.doa:
         flash("Due date completed.", "error")
@@ -276,7 +286,7 @@ def submit_quiz(quiz_id):
 @login_required
 def scores():
     user = Registrations.query.get(current_user.id)
-    data = Scores.query.join(Quizzes, and_(Quizzes.id == Scores.quiz_id, Scores.user_id == user.id)).join(
+    data = Scores.query.join(Quizzes, and_(Quizzes.id == Scores.quiz_id, Scores.user_id == user.id, Quizzes.is_hidden == False)).join(
         Subjects, Subjects.id == Quizzes.subject_id
         ).join(Chapters, Chapters.id == Quizzes.chapter_id).all()
     return render_template("score.html", user=user, data=data)
@@ -325,7 +335,7 @@ def user_search():
                                           Subjects.subject_des.ilike(f'%{search}%'))).all()
         data3 = Chapters.query.filter(or_(Chapters.chapter.ilike(f'%{search}%'),
                                           Chapters.chapter_des.ilike(f'%{search}%'))).all()
-        data4 = Quizzes.query.filter(Quizzes.title.ilike(f'%{search}%')).all()
+        data4 = Quizzes.query.filter(and_(Quizzes.title.ilike(f'%{search}%'), Quizzes.is_hidden == False)).all()
         return render_template("user_search.html", user=user, due=due, data2=data2, data3=data3, data4=data4, search=search)
 
 @app.route("/admin/search", methods=["GET", "POST"])
@@ -452,6 +462,7 @@ def add_quiz():
     title = request.form.get("title").strip().lower()
     doa = datetime.strptime(request.form.get("doa"), '%Y-%m-%dT%H:%M')
     time = request.form.get("time")
+    is_hidden = request.form.get("is_hidden")
     remarks = request.form.get("remarks")
 
     chapter = Chapters.query.get(chap_id)
@@ -465,9 +476,17 @@ def add_quiz():
     for k, v in request.form.items():
         if not v and k != "remarks":
             flash(f"Please fill {k} field.", "error")
-            return redirect(url_for("quizzes")) 
+            return redirect(url_for("quizzes"))
+        if k == "is_hidden":
+            if v!="on" and v!=None:
+                flash("Is_hidden is a boolean value", "error")
+                return redirect(url_for("quizzes")) 
+    if is_hidden == "on":
+        is_hidden = True
+    elif is_hidden == None:
+        is_hidden = False
 
-    new_quiz = Quizzes(subject_id=chapter.subject_id, chapter_id=chap_id, title=title, doa=doa, time=time, remarks=remarks)
+    new_quiz = Quizzes(subject_id=chapter.subject_id, chapter_id=chap_id, title=title, doa=doa, is_hidden=is_hidden, time=time, remarks=remarks)
     db.session.add(new_quiz)
     db.session.commit()
     flash("Quiz added successfully", "success")
@@ -477,12 +496,16 @@ def add_quiz():
 @admin_auth
 def edit_quiz(id):
     title = request.form.get("title").strip().lower()
+    v = request.form.get("is_hidden")
+    if v and v!="on":
+        flash(f"Hidden checkbox should give appropriate input.", "error")
+        return redirect(url_for("quizzes"))
 
     old_quiz = Quizzes.query.get(id)
     existing_quiz = Quizzes.query.filter_by(title=title).first()
 
     if not existing_quiz and title != old_quiz.title:
-        flash("Chapter already exist!", "error")
+        flash("Quiz already exist!", "error")
         return redirect(url_for("admin"))
     
     update(old_quiz, request.form.items())
@@ -576,9 +599,6 @@ if  __name__ == "__main__":
 
 '''
 ADD() ka function similar to UPDATE(),
-Displaying due date passed quizzes, current quizzes,
-admin can make a quiz hide or unseen from users feature,
 USER CHARTS,
-CSS/BOOTSTRAP,
 APIs
 '''

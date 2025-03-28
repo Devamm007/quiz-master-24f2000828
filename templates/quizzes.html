@@ -16,6 +16,7 @@
         <div class="col-6">
             <div class="p-2 border border-secondary">
                 <p title="{{quiz.remarks}}">{{quiz.title}}</p>
+                <p>Quiz hidden from users: {{quiz.is_hidden}}</p>
                 <table class="table table-bordered table-hover text-center align-middle">
                     <thead class="table-dark">
                         <tr>
@@ -140,6 +141,7 @@
                         <div><label class="form-label">Title: <input class="form-control" name="title" type="text" value="{{quiz.title}}"></label></div>
                         <div><label class="form-label">Due Date: <input class="form-control" name="doa" type="datetime-local" value="{{quiz.doa}}"></label></div>
                         <div><label class="form-label">Duration (in minutes): <input class="form-control" name="time" type="number" value="{{quiz.time}}"></label></div>
+                        <div><label class="form-label">Hide Status: <input class="form-check-input" type="checkbox" name="is_hidden" {% if quiz.is_hidden %}checked{% endif %}/></label></div>
                         <div><label class="form-label">Remarks: <input class="form-control" name="remarks" type="text" value="{{quiz.remarks}}"></label></div>
                         <input class="btn btn-success" type="submit" value="Update">
                     </form>
@@ -161,6 +163,7 @@
             <div><label class="form-label">Title: <input class="form-control" name="title" type="text" placeholder="quiz's title" required></label></div>
             <div><label class="form-label">Due Date: <input class="form-control" name="doa" type="datetime-local" required></label></div>
             <div><label class="form-label">Duration (in minutes): <input class="form-control" name="time" type="number" required></label></div>
+            <div><label class="form-label">Hide Status: <input class="form-check-input" type="checkbox" name="is_hidden" /></label></div>
             <div><label class="form-label">Remarks: <input class="form-control" name="remarks" type="text" placeholder="Enter any remark for students"></label></div>
             <input class="btn btn-success" type="submit" value="Submit">
         </form>

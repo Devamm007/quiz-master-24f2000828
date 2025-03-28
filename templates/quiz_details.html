@@ -12,7 +12,10 @@
         {{chapter.chapter}} (Chapter ID: {{chapter.id}})
         <br>
         {{quiz.doa.strftime('%d-%m-%Y, %H:%M')}} | Duration: {{quiz.time}} minutes
+        <br>
+        Quiz hidden from users: {{quiz.is_hidden}}
     </p>
+    <hr>
     {% for question in questions %}
         <div>
                 Title: {{question.title}}<br>

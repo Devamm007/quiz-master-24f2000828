@@ -139,6 +139,7 @@
         {% if data4 %}
             {% for quiz in data4 %}
             <h3>Quiz Title: {{ quiz.title }} | ID: {{quiz.id}}</h3>
+            <p>Quiz hidden from users: {{quiz.is_hidden}}</p>
             <div class="btn-group mb-1" role="group" aria-label="Quiz actions">
                 <form style="display: inline;" action="{{url_for('view_quiz', id=quiz.id)}}" method="get">
                     <button class="btn btn-info btn-sm" type="submit" title="chapter_id={{quiz.chapter_id}}">View Quiz</button>
@@ -162,6 +163,7 @@
                     <div><label class="form-label">Title: <input class="form-control" name="title" type="text" value="{{quiz.title}}"></label></div>
                     <div><label class="form-label">Due Date: <input class="form-control" name="doa" type="datetime-local" value="{{quiz.doa}}"></label></div>
                     <div><label class="form-label">Duration (in minutes): <input class="form-control" name="time" type="number" value="{{quiz.time}}"></label></div>
+                    <div><label class="form-label">Hide Status: <input class="form-check-input" type="checkbox" name="is_hidden" {% if quiz.is_hidden %}checked{% endif %}/></label></div>
                     <div><label class="form-label">Remarks: <input class="form-control" name="remarks" type="text" value="{{quiz.remarks}}"></label></div>
                     <input class="btn btn-success" type="submit" value="Update">
                 </form>
