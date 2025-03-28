@@ -3,9 +3,36 @@
     User Details
 {% endblock %}
 {% block style %}
-    
+
 {% endblock %}
 {% block content %}
+<div class="container-fluid">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h4 class="card-title">Users by Pursuing Field</h4>
+                    <img src="data:image/png;base64,{{ pursuing_chart }}" alt="Pursuing Field Distribution" class="img-fluid">
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h4 class="card-title">Users by Age Group</h4>
+                    <img src="data:image/png;base64,{{ age_chart }}" alt="Age Distribution" class="img-fluid">
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h4 class="card-title">Unique Users per Quiz</h4>
+                    <img src="data:image/png;base64,{{ quiz_attempts_chart }}" alt="Quiz Attempts" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
     <table class="table table-bordered table-hover text-center align-middle">
         <thead class="table-dark">
             <tr>
@@ -26,6 +53,7 @@
             </tr>
         {% endfor %}
     </table>
+</div>
 {% endblock %}
 {% block script %}
     

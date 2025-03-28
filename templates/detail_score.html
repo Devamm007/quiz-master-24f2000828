@@ -6,23 +6,75 @@
     
 {% endblock %}
 {% block content %}
+{% if user.is_admin %}
+<h5>UserID {{user_stu.id}} | {{user_stu.username}} | {{user_stu.email}}</h5>
+<hr>
+{% endif %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h4>Quiz Results</h4>
+                    {% if not question_chart %}
+                    No data
+                    {% else %}
+                    <img src="data:image/png;base64,{{ question_chart }}" alt="Question Status" class="img-fluid">
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h4>Score Distribution by Weightage</h4>
+                    {% if not weightage_chart %}
+                    No data
+                    {% else %}
+                    <img src="data:image/png;base64,{{ weightage_chart }}" alt="Weightage Distribution" class="img-fluid">
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
     {% for input in inputs %}
-        <div>
-            <p>Q{{loop.index}}.  {{input.question.question}}</p>
-            <p {% if input.question.answer == '1' %} style="background-color: rgba(29, 122, 0, 0.5)" {% elif input.input_answer == '1' %} style="background-color: rgba(255, 0, 0, 0.5)" {% endif %}>(a) {{input.question.option1}}</p>
-            <p {% if input.question.answer == '2' %} style="background-color: rgba(29, 122, 0, 0.5)" {% elif input.input_answer == '2' %} style="background-color: rgba(255, 0, 0, 0.5)" {% endif %}>(b) {{input.question.option2}}</p>
-            <p {% if input.question.answer == '3' %} style="background-color: rgba(29, 122, 0, 0.5)" {% elif input.input_answer == '3' %} style="background-color: rgba(255, 0, 0, 0.5)" {% endif %}>(c) {{input.question.option3}}</p>
-            <p {% if input.question.answer == '4' %} style="background-color: rgba(29, 122, 0, 0.5)" {% elif input.input_answer == '4' %} style="background-color: rgba(255, 0, 0, 0.5)" {% endif %}>(d) {{input.question.option4}}</p>
-            {% if input.input_answer == input.question.answer %}
-            <p>Correct</p>              
-            {% elif input.input_answer == "None" %}
-            <p>Unattempted</p>
-            {% else %}
-            <p>Incorrect</p>  
-            {% endif %}
-            <br>
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header d-flex justify-content-between">
+                <div class="fw-bold">Question {{loop.index}}</div>
+                <div class="badge bg-secondary">Points: {{input.question.weightage}}</div>
+            </div>
+            <div class="card-body">
+                <p class="card-text mb-3">{{input.question.question}}</p>
+                
+                <div class="list-group">
+                    <label class="list-group-item d-flex align-items-center gap-2 {% if input.question.answer == '1' %}bg-success bg-opacity-25{% elif input.input_answer == '1' %}bg-danger bg-opacity-25{% endif %}">
+                        <span>(a) {{input.question.option1}}</span>
+                    </label>
+                    <label class="list-group-item d-flex align-items-center gap-2 {% if input.question.answer == '2' %}bg-success bg-opacity-25{% elif input.input_answer == '2' %}bg-danger bg-opacity-25{% endif %}">
+                        <span>(b) {{input.question.option2}}</span>
+                    </label>
+                    <label class="list-group-item d-flex align-items-center gap-2 {% if input.question.answer == '3' %}bg-success bg-opacity-25{% elif input.input_answer == '3' %}bg-danger bg-opacity-25{% endif %}">
+                        <span>(c) {{input.question.option3}}</span>
+                    </label>
+                    <label class="list-group-item d-flex align-items-center gap-2 {% if input.question.answer == '4' %}bg-success bg-opacity-25{% elif input.input_answer == '4' %}bg-danger bg-opacity-25{% endif %}">
+                        <span>(d) {{input.question.option4}}</span>
+                    </label>
+                </div>
+
+                <div class="mt-3">
+                    {% if input.input_answer == input.question.answer %}
+                        <span class="badge bg-success">Correct</span>              
+                    {% elif input.input_answer == "None" %}
+                        <span class="badge bg-secondary">Unattempted</span>
+                    {% else %}
+                        <span class="badge bg-danger">Incorrect</span>  
+                    {% endif %}
+                </div>
+            </div>
         </div>
     {% endfor %}
+</div>
 {% endblock %}
 {% block script %}
     
