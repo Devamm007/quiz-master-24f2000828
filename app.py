@@ -440,7 +440,8 @@ def quizzes():
     user=Registrations.query.get(current_user.id)
     quizzes=Quizzes.query.all()
     questions=Questions.query.all()
-    return render_template("quizzes.html", user=user, quizzes=quizzes, questions=questions)
+    chapters=Chapters.query.all()
+    return render_template("quizzes.html", user=user, chapters=chapters, quizzes=quizzes, questions=questions)
 
 @app.route("/admin/quizzes/<int:id>/view")
 @admin_auth

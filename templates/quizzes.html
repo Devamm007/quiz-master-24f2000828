@@ -159,7 +159,15 @@
         <button class="btn btn-close btn-sm " popovertarget="addquiz" popovertargetaction="hide"></button>
         <p>New Quiz</p>
         <form action="{{url_for('add_quiz')}}" method="post">
-            <div><label class="form-label">Chapter ID: <input class="form-control" name="chap_id" type="number" placeholder="Enter chapter ID" required></label></div>
+            <div>
+                <label class="form-label">Chapter: 
+                    <select id="answer" name="chap_id" required>
+                        {% for chapter in chapters %}
+                            <option value={{chapter.id}}>{{chapter.chapter}}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
             <div><label class="form-label">Title: <input class="form-control" name="title" type="text" placeholder="quiz's title" required></label></div>
             <div><label class="form-label">Due Date: <input class="form-control" name="doa" type="datetime-local" required></label></div>
             <div><label class="form-label">Duration (in minutes): <input class="form-control" name="time" type="number" required></label></div>
