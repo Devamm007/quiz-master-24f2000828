@@ -17,10 +17,10 @@
             <input type="submit" class="btn btn-primary" value="Enter">
         </div>
     </form>
-
+    
     {% if search %}
+    <hr>
         {% if data1 %}
-        <hr>
         <table class="table table-bordered table-hover text-center align-middle">
             <thead class="table-dark">
                 <tr>
@@ -80,9 +80,9 @@
             <div class="p-2 bg-white rounded-4 custom-shadow" id="edit_sub_{{subject.id}}" popover>
                 <button class="btn btn-close btn-sm " popovertarget="edit_sub_{{subject.id}}" popovertargetaction="hide"></button>
                 <p>Update Subject</p>
-                <form action="{{url_for('edit_subject', id=subject.id)}}" method="post">
+                <form id="edit_sub" action="{{url_for('edit_subject', id=subject.id)}}" method="post">
                     <div><label class="form-label">Name: <input class="form-control" type="text" name="subject" value="{{subject.subject}}"></label></div>
-                    <div><label class="form-label">Description: <textarea class="form-control" type="text" name="subject_des">{{subject.subject_des}}</textarea></label></div>
+                    <div><label class="form-label">Description: <input class="form-control" type="text" name="subject_des" value="{{subject.subject_des}}"></label></div>
                     <input class="btn btn-success" type="submit" value="Update">
                 </form>
             </div>
@@ -125,9 +125,9 @@
             <div class="p-2 bg-white rounded-4 custom-shadow" id="edit_chap_{{chapter.id}}" popover>
                 <button class="btn btn-close btn-sm " popovertarget="edit_chap_{{chapter.id}}" popovertargetaction="hide"></button>
                 <p>Update Chapter</p>
-                <form action="{{url_for('edit_chapter', id=chapter.id)}}" method="post">
+                <form id="edit_chap" action="{{url_for('edit_chapter', id=chapter.id)}}" method="post">
                     <div><label class="form-label">Name: <input class="form-control" type="text" name="chapter" value="{{chapter.chapter}}"></label></div>
-                    <div><label class="form-label">Description: <textarea class="form-control" type="text" name="chapter_des">{{chapter.chapter_des}}</textarea></label></div>
+                    <div><label class="form-label">Description: <input class="form-control" type="text" name="chapter_des" value="{{chapter.chapter_des}}"></label></div>
                     <input class="btn btn-success" type="submit" value="Update">
                 </form>
             </div>

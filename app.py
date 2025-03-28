@@ -65,10 +65,11 @@ def update(object, edit):
                     setattr(object, key, datetime.strptime(value, "%Y-%m-%dT%H:%M"))
                     continue
                 setattr(object, key, preprocess_value(value))
-            if "is_hidden" not in edit:
-                setattr(object, "is_hidden", False)
-            else:
-                setattr(object, "is_hidden", True)
+            if hasattr(object, "is_hidden"):
+                if "is_hidden" not in edit:
+                    setattr(object, "is_hidden", False)
+                else:
+                    setattr(object, "is_hidden", True)
         db.session.commit()
     except Exception as e:
         db.session.rollback()
@@ -366,7 +367,8 @@ def admin_search():
 @admin_auth
 def add_subject():
     subject = request.form.get("subject").strip().lower()
-    subject_des = request.form.get("subject_des").strip()
+    subject_des = request.form.get("subject_des")
+    subject_des = subject_des.strip().lower() if subject_des else ""
     existing_subject = Subjects.query.filter_by(subject=subject).first()
 
     if existing_subject:
@@ -402,7 +404,8 @@ def edit_subject(id):
 @admin_auth
 def add_chapter(id):
     chapter = request.form.get("chapter").strip().lower()
-    chapter_des = request.form.get("chapter_des").strip()
+    chapter_des = request.form.get("chapter_des")
+    chapter_des = chapter_des.strip().lower() if chapter_des else ""
     existing_chapter = Chapters.query.filter_by(chapter=chapter).first()
 
     if existing_chapter:
