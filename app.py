@@ -598,7 +598,7 @@ if  __name__ == "__main__":
     app.run(debug=True)
 
 '''
-ADD() ka function similar to UPDATE(),
+ADD() utility function similar UPDATE(),
 USER CHARTS,
 APIs
 '''
