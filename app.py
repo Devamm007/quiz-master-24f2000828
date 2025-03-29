@@ -775,7 +775,7 @@ def edit_chapter(id):
     old_chapter = Chapters.query.get(id)
     existing_chapter = Chapters.query.filter_by(chapter=chapter).first()
 
-    if not existing_chapter and chapter != old_chapter.chapter:
+    if existing_chapter and chapter != old_chapter.chapter:
         flash("Chapter already exist!", "error")
         return redirect(url_for("admin"))
         
