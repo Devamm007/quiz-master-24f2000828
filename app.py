@@ -52,24 +52,25 @@ def admin_auth(func): # decorator for admin authentication
     return auth
 
 def preprocess_value(value):
+    if value == 'on':
+        return True
     if isinstance(value, str):
         return value.strip().lower()
-    return value
 
 def update(object, edit):
     try:
-        for key, value in edit:
+        ed = dict(edit)
+        if hasattr(object, 'is_hidden'):
+                if "is_hidden" not in ed.keys():
+                    setattr(object, "is_hidden", False)
+        for key, value in ed.items():
             if hasattr(object, key):
                 attr_type = type(getattr(object, key))
                 if attr_type == datetime:
                     setattr(object, key, datetime.strptime(value, "%Y-%m-%dT%H:%M"))
                     continue
                 setattr(object, key, preprocess_value(value))
-            if hasattr(object, "is_hidden"):
-                if "is_hidden" not in edit:
-                    setattr(object, "is_hidden", False)
-                else:
-                    setattr(object, "is_hidden", True)
+
         db.session.commit()
     except Exception as e:
         db.session.rollback()
@@ -855,7 +856,7 @@ def edit_quiz(id):
     old_quiz = Quizzes.query.get(id)
     existing_quiz = Quizzes.query.filter_by(title=title).first()
 
-    if not existing_quiz and title != old_quiz.title:
+    if existing_quiz and title != old_quiz.title:
         flash("Quiz already exist!", "error")
         return redirect(url_for("admin"))
     
